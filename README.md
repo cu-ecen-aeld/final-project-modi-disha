@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # AESD-final-project-modi-disha
 
 This Repository will include Implementation of minimal OS using buildroot for X-Client and server applications implementation done by Disha Modi
@@ -17,7 +16,8 @@ Client-X code will be hosted in a repository at [Client-Repo](https://github.com
 
 # Schedule Page
 [Link to Schedule Page](https://github.com/cu-ecen-5013/final-project-swatikadivar/wiki/Schedule-Page)
-=======
+
+
 # buildroot-rpi
 
 
@@ -44,4 +44,3 @@ For model 3 B and B+:
 For model 4 B:
 
   $ make raspberrypi4_defconfig
->>>>>>> buildroot-base/hw-rpi

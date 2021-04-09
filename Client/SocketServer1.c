@@ -18,8 +18,8 @@
 #include <stdint.h>
 
 #define MAXRECVSTRING 30
-#define PORTNO 9000
-#define PORT "9000"
+#define PORTNO 9001
+#define PORT "9001"
 
 #define BACKLOG 10
 int sockfd, newfd;
@@ -108,9 +108,12 @@ int main(int argc, char *argv[])
 	  return -1;
 	}
   
+	int i = 0;
 
   while(operation_switch)
   {
+	  
+	  
 		socklen_t addr_size = sizeof(opp_addr);
 		
 		/// accept socket connection
@@ -127,19 +130,25 @@ int main(int argc, char *argv[])
 		
 	inet_ntop(opp_addr.ss_family, get_in_addr((struct sockaddr *)&opp_addr),
                   s, sizeof s);
-
-	/// LOG MSG TO SYSLOG: "Accepted connection from XXX"
-	syslog(LOG_INFO, "Accepted connection from %s\n", s);
 	
-	char rdBuff[20] = "a = 30";
+	while(1)
+	{
+		printf("index: %d\n", i++);
+
+
+		/// LOG MSG TO SYSLOG: "Accepted connection from XXX"
+		syslog(LOG_INFO, "Accepted connection from %s\n", s);
+		
+		char rdBuff[20] = "a = 50\n";
+		
+		int rc = send(newfd, rdBuff, strlen(rdBuff), MSG_DONTWAIT);
 	
-	int rc = send(newfd, rdBuff, strlen(rdBuff), MSG_DONTWAIT);
-
-    if( rc < 0){
-      perror("Couldnt send sensor results to file\n");
-    }
-
-    usleep(500);
+		if( rc < 0){
+		  perror("Couldnt send sensor results to file\n");
+		}
+	
+		usleep(500);
+	}
  }
 }
   //shutdown(socket_client,SHUT_RDWR);

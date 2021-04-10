@@ -1,1 +1,1 @@
-source "$BR2_EXTERNAL_project_base_PATH/package/aesd-assignments/Config.in"
+source "$BR2_EXTERNAL_assignment_base_PATH/package/socketcomm/Config.in"

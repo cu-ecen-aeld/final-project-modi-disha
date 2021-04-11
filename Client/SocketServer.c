@@ -29,19 +29,21 @@
 #define BACKLOG 10
 int sockfd, newfd;
 char s[INET6_ADDRSTRLEN];
-int operation_switch =1;
+int signal_flag =1;
 pthread_mutex_t socklock;
 char rdBuff[80] = {'\0'};
 
 //Signal HAndler function
 void handle_sig(int sig)
 {
-  operation_switch=0;
+  signal_flag=0;
   if(sig == SIGINT)
     syslog(LOG_DEBUG,"Caught SIGINT Signal exiting\n");
   if(sig == SIGTERM)
-    syslog(LOG_DEBUG,"Caught SIGTERM Signal exiting\n");  
+    syslog(LOG_DEBUG,"Caught SIGTERM Signal exiting\n"); 
+
   shutdown(newfd,SHUT_RDWR);
+  shutdown(sockfd,SHUT_RDWR);
   _exit(0);
 }
 
@@ -52,12 +54,8 @@ typedef struct
 
 void* threadhandler1(void* thread_param)
 {
-//	printf("entering thread handler 1\n");
-	while(operation_switch)
-	{
-		/// LOG MSG TO SYSLOG: "Accepted connection from XXX"
-		syslog(LOG_INFO, "Accepted connection from %s\n", s);
-		
+	while(signal_flag)
+	{	
 		int k=0, rc=0;
 
 		time_t r_time;
@@ -69,11 +67,12 @@ void* threadhandler1(void* thread_param)
 		
 		timeinfo = localtime(&r_time);
 		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
-	pthread_mutex_lock(&socklock);	
+		
+	    pthread_mutex_lock(&socklock);	
 		sprintf(rdBuff, "%s sensor 1: %d\n",buf, k);
-		//printf("%d %s\n",k,rdBuff);
+
 		rc = send(newfd, rdBuff, strlen(rdBuff), MSG_DONTWAIT);
-	pthread_mutex_unlock(&socklock);
+	    pthread_mutex_unlock(&socklock);
 		if( rc < 0){
 		  perror("Couldnt send sensor results to file\n");
 		}
@@ -86,7 +85,7 @@ void* threadhandler1(void* thread_param)
 void* threadhandler2(void* thread_param)
 {
 //	printf("entering thread handler 2\n");
-	while(operation_switch){
+	while(signal_flag){
 			/// LOG MSG TO SYSLOG: "Accepted connection from XXX"
 		syslog(LOG_INFO, "Accepted connection from %s\n", s);
 		
@@ -186,20 +185,20 @@ int main(int argc, char *argv[])
 	  syslog(LOG_ERR, "Socket listen failed.");
 	  return -1;
 	}
-  
+
 	pthread_t thread1, thread2; 
 
-  while(operation_switch)
+  while(signal_flag)
   {
 
 	socklen_t addr_size = sizeof(opp_addr);
-	
-	/// accept socket connection
+		
+		/// accept socket connection
 	newfd = accept(sockfd, (struct sockaddr *)&opp_addr, &addr_size);
 	if(newfd < 0)
 	{
-			syslog(LOG_ERR, "Socket accept failed.");
-		if(!operation_switch) 
+		syslog(LOG_ERR, "Socket accept failed.");
+		if(!signal_flag) 
 		{
 			break;
 		}
@@ -209,10 +208,10 @@ int main(int argc, char *argv[])
 	inet_ntop(opp_addr.ss_family, get_in_addr((struct sockaddr *)&opp_addr),
                   s, sizeof s);
 	
-        threadParams[0].threadIdx = 1;
+    threadParams[0].threadIdx = 1;
 	threadParams[1].threadIdx = 2;
 	
-	/// create pthread and pass socket id, and global mutex in thread arguments
+	/// create pthread and pass thread index
 	if((pthread_create(&thread1, NULL, &threadhandler1, (void *)&(threadParams[0]))) != 0)
 	{
 		printf("thread1 creation failed\n");

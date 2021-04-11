@@ -6,11 +6,11 @@
 ##############################################################
 
 #TODO: Fill up the contents below in order to reference your assignment 3 git contents
-SOCKETCOMM_VERSION=564bf041f5e4c32c87acce23a96bcea9797fdfc1
+SOCKETCOMM_VERSION=ec13c5df39bfade61515758bcb3df906b6861c38
 # Note: Be sure to reference the *ssh* repository URL here (not https) to work properly
 # with ssh keys and the automated build/test system.
 # Your site should start with git@github.com:
-SOCKETCOMM_SITE=git@github.com:cu-ecen-5013/assignment-3-modi-disha.git
+SOCKETCOMM_SITE=git@github.com:cu-ecen-5013/final-project-modi-disha.git
 SOCKETCOMM_SITE_METHOD = git
 
 define SOCKETCOMM_BUILD_CMDS

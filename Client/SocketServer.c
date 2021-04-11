@@ -227,10 +227,11 @@ int main(int argc, char *argv[])
 	  return -1;
 	}	
 	
+	 pthread_join(thread1, NULL);
+	 pthread_join(thread2, NULL);	
  }
  
- pthread_join(thread1, NULL);
- pthread_join(thread2, NULL);
+ printf("Signal received, shutting down...\n");
 }
-  //shutdown(socket_client,SHUT_RDWR);
+
   

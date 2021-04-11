@@ -1,15 +1,15 @@
 
 ##############################################################
 #
-# AESD-ASSIGNMENTS
+# SOCKETCOMM
 #
 ##############################################################
 
-SOCKETCOMM_VERSION=c362248a07445eec35b2a571d322f57ab668472c
+SOCKETCOMM_VERSION=a564a66cf60c4daa3bec2d96928031699aeec040
 # Note: Be sure to reference the *ssh* repository URL here (not https) to work properly
 # with ssh keys and the automated build/test system.
 # Your site should start with git@github.com:
-SOCKETCOMM_SITE=git@github.com:cu-ecen-5013/assignment-3-modi-disha.git
+SOCKETCOMM_SITE=git@github.com:cu-ecen-5013/final-project-modi-disha.git
 SOCKETCOMM_SITE_METHOD = git
 
 define SOCKETCOMM_BUILD_CMDS

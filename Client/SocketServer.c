@@ -1,21 +1,26 @@
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <netinet/in.h>
 #include<stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <stdbool.h>
-#include <time.h>
-#include <math.h>
-#include <arpa/inet.h>
-#include <errno.h>
+#include<stdlib.h>
+#include<string.h>
+#include<errno.h>
+#include<linux/fs.h>
+#include<fcntl.h>
+#include<unistd.h>
+#include<signal.h>
+#include<libgen.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
+#include<arpa/inet.h>
+#include<string.h>
+#include<netdb.h>
 #include<syslog.h>
-#include <signal.h>
-#include <stdint.h>
+#include<pthread.h>
+#include<sys/queue.h>
+#include<sys/time.h>
+#include<time.h>
+#include<stdbool.h>
 
 #define MAXRECVSTRING 30
 #define PORTNO 9000
@@ -25,6 +30,8 @@
 int sockfd, newfd;
 char s[INET6_ADDRSTRLEN];
 int operation_switch =1;
+pthread_mutex_t socklock;
+char rdBuff[80] = {'\0'};
 
 //Signal HAndler function
 void handle_sig(int sig)
@@ -36,6 +43,79 @@ void handle_sig(int sig)
     syslog(LOG_DEBUG,"Caught SIGTERM Signal exiting\n");  
   shutdown(newfd,SHUT_RDWR);
   _exit(0);
+}
+
+typedef struct
+{
+    int threadIdx;
+} threadParams_t;
+
+void* threadhandler1(void* thread_param)
+{
+//	printf("entering thread handler 1\n");
+	while(operation_switch)
+	{
+		/// LOG MSG TO SYSLOG: "Accepted connection from XXX"
+		syslog(LOG_INFO, "Accepted connection from %s\n", s);
+		
+		int k=0, rc=0;
+
+		time_t r_time;
+		struct tm *timeinfo;
+		char buf[30];
+		time(&r_time);
+
+		k = rand()%70;
+		
+		timeinfo = localtime(&r_time);
+		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
+	pthread_mutex_lock(&socklock);	
+		sprintf(rdBuff, "%s sensor 1: %d\n",buf, k);
+		//printf("%d %s\n",k,rdBuff);
+		rc = send(newfd, rdBuff, strlen(rdBuff), MSG_DONTWAIT);
+	pthread_mutex_unlock(&socklock);
+		if( rc < 0){
+		  perror("Couldnt send sensor results to file\n");
+		}
+	
+		sleep(1);
+	}
+	pthread_exit((void *)0);
+}
+
+void* threadhandler2(void* thread_param)
+{
+//	printf("entering thread handler 2\n");
+	while(operation_switch){
+			/// LOG MSG TO SYSLOG: "Accepted connection from XXX"
+		syslog(LOG_INFO, "Accepted connection from %s\n", s);
+		
+		int k=0,rc=0;
+		
+
+		time_t r_time;
+		struct tm *timeinfo;
+		char buf[30];
+		time(&r_time);
+
+		k = rand()%70;
+		
+		timeinfo = localtime(&r_time);
+		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
+		
+	pthread_mutex_lock(&socklock);	
+		sprintf(rdBuff, "%s sensor 2: %d\n",buf, k);
+		//printf("%d %s\n",k,rdBuff);
+		rc = send(newfd, rdBuff, strlen(rdBuff), MSG_DONTWAIT);
+	pthread_mutex_unlock(&socklock);
+		if( rc < 0){
+		  perror("Couldnt send sensor results to file\n");
+		}
+	
+		sleep(1);
+	}
+//	printf("exiting pthread 2\n");
+	pthread_exit((void *)0);
 }
 
 // This routine returns client socket address
@@ -51,9 +131,17 @@ void *get_in_addr(struct sockaddr *sa)
   
 int main(int argc, char *argv[])
 {
+	
+  threadParams_t threadParams[2];
   signal(SIGTERM,handle_sig);
   signal(SIGINT,handle_sig);
 
+  if(pthread_mutex_init(&socklock, NULL) != 0)
+  {
+	  printf("mutex init failed.\n");
+	  return -1; 
+  }
+	  
   struct sockaddr_storage opp_addr;
   struct addrinfo ref, *res, *p;
   memset(&ref, 0, sizeof(ref));
@@ -92,15 +180,6 @@ int main(int argc, char *argv[])
 	
 	freeaddrinfo(res);
 
-//int opt;
-//
-///// start daemon if -d given in argument
-//if((opt = getopt(argc, argv, "d")) == 'd')
-//{
-//	daemon(0, sockfd);
-//}
-
-
 	/// socket listen
 	if(listen(sockfd, BACKLOG) < 0)
 	{
@@ -108,14 +187,14 @@ int main(int argc, char *argv[])
 	  return -1;
 	}
   
-int i = 0;
+	pthread_t thread1, thread2; 
 
   while(operation_switch)
   {
 
-		socklen_t addr_size = sizeof(opp_addr);
-		
-		/// accept socket connection
+	socklen_t addr_size = sizeof(opp_addr);
+	
+	/// accept socket connection
 	newfd = accept(sockfd, (struct sockaddr *)&opp_addr, &addr_size);
 	if(newfd < 0)
 	{
@@ -130,25 +209,29 @@ int i = 0;
 	inet_ntop(opp_addr.ss_family, get_in_addr((struct sockaddr *)&opp_addr),
                   s, sizeof s);
 	
-	while(1)
+        threadParams[0].threadIdx = 1;
+	threadParams[1].threadIdx = 2;
+	
+	/// create pthread and pass socket id, and global mutex in thread arguments
+	if((pthread_create(&thread1, NULL, &threadhandler1, (void *)&(threadParams[0]))) != 0)
 	{
-		  printf("index %d\n", i++);
-
-
-		/// LOG MSG TO SYSLOG: "Accepted connection from XXX"
-		syslog(LOG_INFO, "Accepted connection from %s\n", s);
-		
-		char rdBuff[20] = "a = 30\n";
-		
-		int rc = send(newfd, rdBuff, strlen(rdBuff), MSG_DONTWAIT);
-	
-		if( rc < 0){
-		  perror("Couldnt send sensor results to file\n");
-		}
-	
-		usleep(500);
+		printf("thread1 creation failed\n");
+	  syslog(LOG_ERR, "pthread create failed.");
+	  return -1;
 	}
+	
+	/// create pthread and pass socket id, and global mutex in thread arguments
+	if((pthread_create(&thread2, NULL, &threadhandler2, (void *)&(threadParams[1]))) != 0)
+	{
+		printf("thread2 creation failed\n");
+	  syslog(LOG_ERR, "pthread create failed.");
+	  return -1;
+	}	
+	
  }
+ 
+ pthread_join(thread1, NULL);
+ pthread_join(thread2, NULL);
 }
   //shutdown(socket_client,SHUT_RDWR);
   

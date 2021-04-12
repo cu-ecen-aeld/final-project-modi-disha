@@ -1,0 +1,5 @@
+
+config BR2_PACKAGE_AESDI2C
+        bool "aesdi2c"
+        help
+                Linux Kernel Module.

@@ -1,3 +1,8 @@
+/* SocketClient application for AESD final project. This file implements Socket Client code 
+ * which connects to the servers specified into the arguments.
+ * Author: Disha Modi */
+
+/// Include Libraries ///
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -22,17 +27,17 @@
 #include<time.h>
 #include<stdbool.h>
 
-#define MAXRECVSTRING 30
-#define PORTNO 9000
 #define PORT "9000"
 #define pFILE "/var/tmp/sensordata.txt"
 
 uint8_t thread_count = 0;
 int signal_flag = 1;
 pthread_mutex_t socklock;
-//socket descriptor
+
+// socket descriptor
 int socket_client;
 
+// thread parameter structure
 typedef struct
 {
     int threadIdx;
@@ -53,6 +58,7 @@ void handle_sig(int sig)
   _exit(0);
 }
 
+/// Thread handler to receive data from servers and write it back to the file.
 void* threadhandler(void* thread_param)
 {
   threadParams_t *args = (threadParams_t *)thread_param;
@@ -84,25 +90,27 @@ void* threadhandler(void* thread_param)
 
  	pthread_mutex_lock(&socklock);
  	ssize_t rc = write(fd, (void *)rcv_cmd, strlen(rcv_cmd));
-    pthread_mutex_unlock(&socklock);
+        pthread_mutex_unlock(&socklock);
     
-     if( rc < 0)
-     {
-       perror("Couldnt write sensor results to file\n");
-     }
-     else
-     {
+        if( rc < 0)
+        {
+           perror("Couldnt write sensor results to file\n");
+        }
+        else
+        {
     	 if(strcmp(rcv_cmd, "threshold reached") == 0)
     	 {
     		 send(socket_client, rcv_cmd, strlen(rcv_cmd), MSG_DONTWAIT);
     	 }
-     }
+        }
  	
      close(fd);
   }
   pthread_exit((void *)0);
 }
   
+/// Main function implements socket connect and calls threads. 
+// Executes code until sigint or sigterm signal.
 int main(int argc, char *argv[])
 {
   thread_count = atoi(argv[1])-1;

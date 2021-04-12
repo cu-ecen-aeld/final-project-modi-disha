@@ -1,3 +1,7 @@
+/* SocketServer application for AESD final project. This file implements Socket Server code 
+ * which accepts connection from the client.
+ * Author: Disha Modi */
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -22,11 +26,9 @@
 #include<time.h>
 #include<stdbool.h>
 
-#define MAXRECVSTRING 30
-#define PORTNO 9000
 #define PORT "9000"
-
 #define BACKLOG 10
+
 int sockfd, newfd;
 char s[INET6_ADDRSTRLEN];
 int signal_flag =1;
@@ -47,11 +49,13 @@ void handle_sig(int sig)
   _exit(0);
 }
 
+/// Thread parameter structure
 typedef struct
 {
     int threadIdx;
 } threadParams_t;
 
+/// Thread handler writes pseudo sensor 1 data to the socket
 void* threadhandler1(void* thread_param)
 {
 	while(signal_flag)
@@ -68,11 +72,11 @@ void* threadhandler1(void* thread_param)
 		timeinfo = localtime(&r_time);
 		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
 		
-	    pthread_mutex_lock(&socklock);	
+	        pthread_mutex_lock(&socklock);	
 		sprintf(rdBuff, "%s sensor 1: %d\n",buf, k);
 
 		rc = send(newfd, rdBuff, strlen(rdBuff), MSG_DONTWAIT);
-	    pthread_mutex_unlock(&socklock);
+	        pthread_mutex_unlock(&socklock);
 		if( rc < 0){
 		  perror("Couldnt send sensor results to file\n");
 		}
@@ -82,6 +86,8 @@ void* threadhandler1(void* thread_param)
 	pthread_exit((void *)0);
 }
 
+
+/// Thread handler writes pseudo sensor 1 data to the socket
 void* threadhandler2(void* thread_param)
 {
 //	printf("entering thread handler 2\n");
@@ -91,7 +97,6 @@ void* threadhandler2(void* thread_param)
 		
 		int k=0,rc=0;
 		
-
 		time_t r_time;
 		struct tm *timeinfo;
 		char buf[30];
@@ -102,11 +107,11 @@ void* threadhandler2(void* thread_param)
 		timeinfo = localtime(&r_time);
 		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
 		
-	pthread_mutex_lock(&socklock);	
+        	pthread_mutex_lock(&socklock);	
 		sprintf(rdBuff, "%s sensor 2: %d\n",buf, k);
 		//printf("%d %s\n",k,rdBuff);
 		rc = send(newfd, rdBuff, strlen(rdBuff), MSG_DONTWAIT);
-	pthread_mutex_unlock(&socklock);
+        	pthread_mutex_unlock(&socklock);
 		if( rc < 0){
 		  perror("Couldnt send sensor results to file\n");
 		}
@@ -127,7 +132,9 @@ void *get_in_addr(struct sockaddr *sa)
 
 	return &(((struct sockaddr_in6*)sa)->sin6_addr);   // for IPv6
 }
-  
+
+/// Main function performs socket binding and calls thread handlers.
+// This function executes code until sigint or sigterm signal.
 int main(int argc, char *argv[])
 {
 	

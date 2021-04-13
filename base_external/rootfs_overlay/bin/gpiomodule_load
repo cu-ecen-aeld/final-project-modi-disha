@@ -1,6 +1,6 @@
 #!/bin/sh
-module=aesdchar
-device=aesdchar
+module=gpiomodule
+device=gpiomodule
 mode="664"
 cd `dirname $0`
 set -e

@@ -1,0 +1,17 @@
+#! /bin/sh
+
+
+case "$1" in
+start)
+echo "Starting init script for Module Loading"
+/bin/gpiomodule_load
+;;
+stop)
+echo "Removing user modules"
+/bin/gpiomodule_unload
+;;
+*)
+echo "Usage: $0 {start|stop}"
+exit 1
+esac
+exit 0

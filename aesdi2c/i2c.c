@@ -4,15 +4,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
+#include "i2c-dev.h"
 
 void main() 
 {
 	// Create I2C bus
 	int file;
-	char *bus = "/dev/i2c-1";
+	char *bus = (char*)"/dev/i2c-1";
 	if ((file = open(bus, O_RDWR)) < 0) 
 	{
 		printf("Failed to open the bus. \n");

@@ -1,26 +1,20 @@
 
 ##############################################################
 #
-# AESDI2C-ASSIGNMENTS
+# GPIOMODULE-ASSIGNMENTS
 #
 ##############################################################
 
 #TODO: Fill up the contents below in order to reference your assignment 3 git contents
-AESDI2C_VERSION = 2eab250bfdf10d37723b38c2d8b94b7e4eede25d
+GPIOMODULE_VERSION = 6dbc8f689ba034199bd9f5977af27297f2ec8f65
 
 
 # Note: Be sure to reference the *ssh* repository URL here (not https) to work properly
 # with ssh keys and the automated build/test system.
 # Your site should start with git@github.com:
-AESDI2C_SITE=git@github.com:cu-ecen-5013/final-project-modi-disha.git
-AESDI2C_SITE_METHOD = git
+GPIOMODULE_SITE=git@github.com:cu-ecen-5013/final-project-modi-disha.git
+GPIOMODULE_SITE_METHOD = git
+GPIOMODULE_MODULE_SUBDIRS = aesd-gpio-driver/
 
-define AESDI2C_BUILD_CMDS
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/aesdi2c all
-endef
-
-define AESDI2C_INSTALL_TARGET_CMDS
-	$(INSTALL) -m 0755 $(@D)/aesdi2c/* $(TARGET_DIR)/usr/bin
-endef
-
+$(eval $(kernel-module))
 $(eval $(generic-package))

@@ -1,0 +1,10 @@
+*.order
+*.symvers
+*.ko
+.*.cmd
+.tmp_versions*
+*.mod.c
+*.o
+linux_source_cdt
+*.mod
+build

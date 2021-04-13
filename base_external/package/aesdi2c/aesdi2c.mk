@@ -14,7 +14,13 @@ AESDI2C_VERSION = 4ba95311e91ae8541209facde5a3e30abd8fffd1
 # Your site should start with git@github.com:
 AESDI2C_SITE=git@github.com:cu-ecen-5013/final-project-modi-disha.git
 AESDI2C_SITE_METHOD = git
-AESDI2C_MODULE_SUBDIRS = aesd-i2c-driver/
 
-$(eval $(kernel-module))
+define AESDI2C_BUILD_CMDS
+	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/aesdi2c all
+endef
+
+define AESDI2C_INSTALL_TARGET_CMDS
+	$(INSTALL) -m 0755 $(@D)/aesdi2c/* $(TARGET_DIR)/usr/bin
+endef
+
 $(eval $(generic-package))

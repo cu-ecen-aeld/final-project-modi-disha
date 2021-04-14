@@ -123,7 +123,7 @@ ssize_t raspi_gpio_write(struct file *filp, const char __user *buf, size_t count
 	unsigned long flags;
 	gpio = iminor(filp->f_path.dentry->d_inode);
 	len = count < BUF_SIZE ? count-1 : BUF_SIZE-1;
-	if(copy_from_user(kbuf, buf, len) != 0)
+	if(__copy_from_user(kbuf, buf, len) != 0)
 	return -EFAULT;
 	kbuf[len] = '\0';
 	printk(KERN_INFO "Request from user: %s\n", kbuf);

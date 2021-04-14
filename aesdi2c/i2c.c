@@ -30,30 +30,31 @@ void main()
 	char config[2]={0};
 	config[0] = 0x2C;
 	config[1] = 0x0A;
-	if(write(file, config, 2) < 0)
+        int bytes = 0;
+	if((bytes = write(file, config, 2)) < 0)
 	//if(i2c_smbus_write_byte_data(file, 0x2C, 0x0A) < 0)
 	{
-		printf("write word 0x0a2c failed. \n");
+		printf("write word 0x0a2c failed with %d. \n", bytes);
 		exit(1);
 	}
 	// Select Power control register(0x2D)
 	// Auto-sleep disable(0x08)
 	config[0] = 0x2D;
 	config[1] = 0x08;
-	if(write(file, config, 2) < 0)
+	if((bytes = write(file, config, 2)) < 0)
 	//if(i2c_smbus_write_byte_data(file, 0x2D, 0x08) < 0)
 	{
-		printf("write word 0x082d failed. \n");
+		printf("write word 0x082d failed with %d. \n", bytes);
 		exit(1);
 	}
 	// Select Data format register(0x31)
 	// Self test disabled, 4-wire interface, Full resolution, range = +/-2g(0x08)
 	config[0] = 0x31;
 	config[1] = 0x08;
-	if(write(file, config, 2) < 0)
+	if((bytes = write(file, config, 2)) < 0)
 	//if(i2c_smbus_write_byte_data(file, 0x31, 0x08) < 0)
 	{
-		printf("write word 0x0831 failed. \n");
+		printf("write word 0x0831 failed with %d. \n", bytes);
 		exit(1);
 	}
 	sleep(1);

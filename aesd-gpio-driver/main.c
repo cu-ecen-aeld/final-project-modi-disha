@@ -166,13 +166,13 @@ ssize_t raspi_gpio_write(struct file *filp, const char __user *buf, size_t count
 			spin_unlock_irqrestore(&raspi_gpio_devp->lock, flags);
 			}
 		}
-	} /*else if ( (strcmp(kbuf, "rising") == 0) || (strcmp(kbuf, "falling") == 0)) 
+	} else if ( (strcmp(kbuf, "rising") == 0) || (strcmp(kbuf, "falling") == 0)) 
 	{
 		spin_lock_irqsave(&raspi_gpio_devp->lock, flags);
 		gpio_direction_input(gpio);
 		raspi_gpio_devp->dir = in;
 		spin_unlock_irqrestore(&raspi_gpio_devp->lock, flags);
-	}*/ else 
+	} else 
 	{
 		printk(KERN_ERR "Invalid value\n");
 		return -EINVAL;

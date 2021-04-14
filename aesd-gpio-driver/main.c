@@ -35,7 +35,7 @@
 /* User-defined macros */
 #define NUM_GPIO_PINS 21
 #define MAX_GPIO_NUMBER 32
-#define DEVICE_NAME "raspi-gpio"
+#define DEVICE_NAME "aesd-gpio"
 #define BUF_SIZE 1024
 
 /* User-defined data types */

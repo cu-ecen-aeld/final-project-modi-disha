@@ -5,7 +5,7 @@
 #
 ##############################################################
 
-AESDGPIO_VERSION=c9926b30dfdd3db38b50389b6c4f338810fd60a6
+AESDGPIO_VERSION=5f8901de184cab798cd21c759eed6d69f3c22405
 # Note: Be sure to reference the *ssh* repository URL here (not https) to work properly
 # with ssh keys and the automated build/test system.
 # Your site should start with git@github.com:

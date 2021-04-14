@@ -19,60 +19,84 @@ void main()
 		exit(1);
 	}
 	// Get I2C device, ADXL345 I2C address is 0x53(83)
-	ioctl(file, I2C_SLAVE, 0x53);
+	if(ioctl(file, I2C_SLAVE, 0x53) < 0)
+	{
+		printf("ioctl 0x53 failed. \n");
+		exit(1);
+	}
 
 	// Select Bandwidth rate register(0x2C)
 	// Normal mode, Output data rate = 100 Hz(0x0A)
 	char config[2]={0};
 	config[0] = 0x2C;
 	config[1] = 0x0A;
-	write(file, config, 2);
+	if(i2c_smbus_write_byte_data(file, 0x2C, 0x0A) < 0)
+	{
+		printf("write word 0x0a2c failed. \n");
+		exit(1);
+	}
 	// Select Power control register(0x2D)
 	// Auto-sleep disable(0x08)
 	config[0] = 0x2D;
 	config[1] = 0x08;
-	write(file, config, 2);
+	//write(file, config, 2);
+	if(i2c_smbus_write_byte_data(file, 0x2D, 0x08) < 0)
+	{
+		printf("write word 0x082d failed. \n");
+		exit(1);
+	}
 	// Select Data format register(0x31)
 	// Self test disabled, 4-wire interface, Full resolution, range = +/-2g(0x08)
 	config[0] = 0x31;
 	config[1] = 0x08;
-	write(file, config, 2);
+	//write(file, config, 2);
+	if(i2c_smbus_write_byte_data(file, 0x31, 0x08) < 0)
+	{
+		printf("write word 0x0831 failed. \n");
+		exit(1);
+	}
 	sleep(1);
 
 	// Read 6 bytes of data from register(0x32)
 	// xAccl lsb, xAccl msb, yAccl lsb, yAccl msb, zAccl lsb, zAccl msb
 	char reg[1] = {0x32};
-	write(file, reg, 1);
-	char data[6] ={0};
-	if(read(file, data, 6) != 6)
+	/*write(file, reg, 1);
+	if(i2c_smbus_write_byte_data(file, 0x53, reg) < 0)
 	{
-		printf("Erorr : Input/output Erorr \n");
+		printf("write word 0x0831 failed. \n");
 		exit(1);
-	}
-	else
+	} */
+	char data[6] ={0};
+
+	data[0] = i2c_smbus_read_byte_data(file, 0x32);
+	data[1] = i2c_smbus_read_byte_data(file, 0x33);
+	data[2] = i2c_smbus_read_byte_data(file, 0x34);
+	data[3] = i2c_smbus_read_byte_data(file, 0x35);
+	data[4] = i2c_smbus_read_byte_data(file, 0x36);
+	data[5] = i2c_smbus_read_byte_data(file, 0x37);
+	
+	// Convert the data to 10-bits
+	int xAccl = ((data[1] & 0x03) * 256 + (data[0] & 0xFF));
+	if(xAccl > 511)
 	{
-		// Convert the data to 10-bits
-		int xAccl = ((data[1] & 0x03) * 256 + (data[0] & 0xFF));
-		if(xAccl > 511)
-		{
-			xAccl -= 1024;
-		}
-
-		int yAccl = ((data[3] & 0x03) * 256 + (data[2] & 0xFF));
-		if(yAccl > 511)
-		{
-			yAccl -= 1024;
-		}
-
-		int zAccl = ((data[5] & 0x03) * 256 + (data[4] & 0xFF));
-		if(zAccl > 511)
-		{
-			zAccl -= 1024;
-		}
-
-		// Output data to screen
-		printf("Acceleration in X-Axis : %d \n", xAccl);
-		printf("Acceleration in Y-Axis : %d \n", yAccl);
-		printf("Acceleration in Z-Axis : %d \n", zAccl);
+		xAccl -= 1024;
 	}
+
+	int yAccl = ((data[3] & 0x03) * 256 + (data[2] & 0xFF));
+	if(yAccl > 511)
+	{
+		yAccl -= 1024;
+	}
+
+	int zAccl = ((data[5] & 0x03) * 256 + (data[4] & 0xFF));
+	if(zAccl > 511)
+	{
+		zAccl -= 1024;
+	}
+
+	// Output data to screen
+	printf("Acceleration in X-Axis : %d \n", xAccl);
+	printf("Acceleration in Y-Axis : %d \n", yAccl);
+	printf("Acceleration in Z-Axis : %d \n", zAccl);
+	
 }

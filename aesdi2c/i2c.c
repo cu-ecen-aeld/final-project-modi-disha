@@ -62,7 +62,7 @@ void main()
 	// Read 6 bytes of data from register(0x32)
 	// xAccl lsb, xAccl msb, yAccl lsb, yAccl msb, zAccl lsb, zAccl msb
 	char reg[1] = {0x32};
-	if(write(file, reg, 1) < 0)
+	if((bytes = write(file, reg, 1)) < 0)
 	//if(i2c_smbus_write_byte_data(file, 0x53, reg) < 0)
 	{
 		printf("write word 0x0831 failed. \n");
@@ -70,7 +70,7 @@ void main()
 	} 
 	char data[6] ={0};
 
-	if(read(file, data, 6) != 6)
+	if((bytes = read(file, data, 6)) != 6)
 	{
 		printf("Erorr : Input/output Erorr \n");
 		exit(1);

@@ -6,7 +6,7 @@
 ##############################################################
 
 #TODO: Fill up the contents below in order to reference your assignment 3 git contents
-GPIOMODULE_VERSION = 0f0dda53107aced36b42d9e5b58f909050a4e4b7
+GPIOMODULE_VERSION = cfd86fe7659ca10fb2be1299cd5db061079af08e
 
 
 # Note: Be sure to reference the *ssh* repository URL here (not https) to work properly

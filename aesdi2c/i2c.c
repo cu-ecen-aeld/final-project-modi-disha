@@ -31,7 +31,7 @@ void main()
 	config[0] = 0x2C;
 	config[1] = 0x0A;
         int bytes = 0;
-	if((bytes = write(file, config, 2)) < 0)
+	if((bytes = write(file, &config[0], 2)) < 0)
 	//if(i2c_smbus_write_byte_data(file, 0x2C, 0x0A) < 0)
 	{
 		printf("write word 0x0a2c failed with %d. \n", bytes);
@@ -41,7 +41,7 @@ void main()
 	// Auto-sleep disable(0x08)
 	config[0] = 0x2D;
 	config[1] = 0x08;
-	if((bytes = write(file, config, 2)) < 0)
+	if((bytes = write(file, &config[0], 2)) < 0)
 	//if(i2c_smbus_write_byte_data(file, 0x2D, 0x08) < 0)
 	{
 		printf("write word 0x082d failed with %d. \n", bytes);
@@ -51,7 +51,7 @@ void main()
 	// Self test disabled, 4-wire interface, Full resolution, range = +/-2g(0x08)
 	config[0] = 0x31;
 	config[1] = 0x08;
-	if((bytes = write(file, config, 2)) < 0)
+	if((bytes = write(file, &config[0], 2)) < 0)
 	//if(i2c_smbus_write_byte_data(file, 0x31, 0x08) < 0)
 	{
 		printf("write word 0x0831 failed with %d. \n", bytes);
@@ -62,7 +62,7 @@ void main()
 	// Read 6 bytes of data from register(0x32)
 	// xAccl lsb, xAccl msb, yAccl lsb, yAccl msb, zAccl lsb, zAccl msb
 	char reg[1] = {0x32};
-	if((bytes = write(file, reg, 1)) < 0)
+	if((bytes = write(file, &reg[0], 1)) < 0)
 	//if(i2c_smbus_write_byte_data(file, 0x53, reg) < 0)
 	{
 		printf("write word 0x0831 failed. \n");
@@ -70,7 +70,7 @@ void main()
 	} 
 	char data[6] ={0};
 
-	if((bytes = read(file, data, 6)) != 6)
+	if((bytes = read(file, &data[0], 6)) != 6)
 	{
 		printf("Erorr : Input/output Erorr \n");
 		exit(1);

@@ -6,7 +6,7 @@
 ##############################################################
 
 #TODO: Fill up the contents below in order to reference your assignment 3 git contents
-AESDI2C_VERSION = 3b25dd04fa102267344c0ecc7c922eb33d4efcd9
+AESDI2C_VERSION = de748b8b3db8b4646e506cb32f6031e7e5921133
 
 
 # Note: Be sure to reference the *ssh* repository URL here (not https) to work properly

@@ -11,7 +11,7 @@ ifeq ($(INCLUDES),)
 	INCLUDES = -I/
 endif
 
-all: i2c i2c2 i2c_imu
+all: i2c i2c2
 
 i2c.o: i2c.c
 	$(CC) $(CFLAGS) -c i2c.c

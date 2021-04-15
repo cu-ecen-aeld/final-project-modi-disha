@@ -8,7 +8,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
-#include <linux/i2c-dev.h>
+#include "i2c-dev.h"
 
 void main() 
 {
@@ -33,8 +33,8 @@ void main()
 	config[0] = 0x2C;
 	config[1] = 0x0A;
         int bytes = 0;
-	if((bytes = write(i2c_file, &config[0], 2)) < 0)
-	//if(i2c_smbus_write_byte_data(file, 0x2C, 0x0A) < 0)
+	//if((bytes = write(i2c_file, &config[0], 2)) < 0)
+	if((bytes = i2c_smbus_write_byte_data(i2c_file, 0x2C, 0x0A)) < 0)
 	{
 		printf("write word 0x0a2c failed with %d error %s. \n", bytes, strerror(errno));
 		exit(1);
@@ -43,8 +43,8 @@ void main()
 	// Auto-sleep disable(0x08)
 	config[0] = 0x2D;
 	config[1] = 0x08;
-	if((bytes = write(i2c_file, &config[0], 2)) < 0)
-	//if(i2c_smbus_write_byte_data(file, 0x2D, 0x08) < 0)
+	//if((bytes = write(i2c_file, &config[0], 2)) < 0)
+	if((bytes = i2c_smbus_write_byte_data(i2c_file, 0x2D, 0x08)) < 0)
 	{
 		printf("write word 0x082d failed with %d error %s. \n", bytes, strerror(errno));
 		exit(1);
@@ -53,8 +53,8 @@ void main()
 	// Self test disabled, 4-wire interface, Full resolution, range = +/-2g(0x08)
 	config[0] = 0x31;
 	config[1] = 0x08;
-	if((bytes = write(i2c_file, &config[0], 2)) < 0)
-	//if(i2c_smbus_write_byte_data(file, 0x31, 0x08) < 0)
+	//if((bytes = write(i2c_file, &config[0], 2)) < 0)
+	if((bytes = i2c_smbus_write_byte_data(i2c_file, 0x31, 0x08)) < 0)
 	{
 		printf("write word 0x0831 failed with %d error %s. \n", bytes, strerror(errno));
 		exit(1);
@@ -64,27 +64,27 @@ void main()
 	// Read 6 bytes of data from register(0x32)
 	// xAccl lsb, xAccl msb, yAccl lsb, yAccl msb, zAccl lsb, zAccl msb
 	char reg[1] = {0x32};
-	if((bytes = write(i2c_file, &reg[0], 1)) < 0)
-	//if(i2c_smbus_write_byte_data(file, 0x53, reg) < 0)
+	//if((bytes = write(i2c_file, &reg[0], 1)) < 0)
+	if((bytes = i2c_smbus_write_byte_data(i2c_file, 0x53, 0x32)) < 0)
 	{
 		printf("write word 0x0831 failed %d bytes %s. \n", bytes, strerror(errno));
 		exit(1);
 	} 
 	char data[6] ={0};
 
-	if((bytes = read(i2c_file, &data[0], 6)) != 6)
+	/*if((bytes = read(i2c_file, &data[0], 6)) != 6)
 	{
-		printf("Erorr : Input/output Erorr %s \n", strerror(errno));
+		printf("Erorr : Input/output Erorr \n");
 		exit(1);
-	}
+	} */
 
-	/*
-	data[0] = i2c_smbus_read_byte_data(file, 0x32);
-	data[1] = i2c_smbus_read_byte_data(file, 0x33);
-	data[2] = i2c_smbus_read_byte_data(file, 0x34);
-	data[3] = i2c_smbus_read_byte_data(file, 0x35);
-	data[4] = i2c_smbus_read_byte_data(file, 0x36);
-	data[5] = i2c_smbus_read_byte_data(file, 0x37); */
+	
+	data[0] = i2c_smbus_read_byte_data(i2c_file, 0x32);
+	data[1] = i2c_smbus_read_byte_data(i2c_file, 0x33);
+	data[2] = i2c_smbus_read_byte_data(i2c_file, 0x34);
+	data[3] = i2c_smbus_read_byte_data(i2c_file, 0x35);
+	data[4] = i2c_smbus_read_byte_data(i2c_file, 0x36);
+	data[5] = i2c_smbus_read_byte_data(i2c_file, 0x37); 
 	
 	// Convert the data to 10-bits
 	int xAccl = ((data[1] & 0x03) * 256 + (data[0] & 0xFF));

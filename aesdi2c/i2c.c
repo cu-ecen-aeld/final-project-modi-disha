@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <linux/i2c-dev.h>
 
 void main() 
@@ -34,7 +35,7 @@ void main()
 	if((bytes = write(file, &config[0], 2)) < 0)
 	//if(i2c_smbus_write_byte_data(file, 0x2C, 0x0A) < 0)
 	{
-		printf("write word 0x0a2c failed with %d. \n", bytes);
+		printf("write word 0x0a2c failed with %d error %s. \n", bytes, strerror(errno));
 		exit(1);
 	}
 	// Select Power control register(0x2D)
@@ -44,7 +45,7 @@ void main()
 	if((bytes = write(file, &config[0], 2)) < 0)
 	//if(i2c_smbus_write_byte_data(file, 0x2D, 0x08) < 0)
 	{
-		printf("write word 0x082d failed with %d. \n", bytes);
+		printf("write word 0x082d failed with %d error %s. \n", bytes, strerror(errno));
 		exit(1);
 	}
 	// Select Data format register(0x31)
@@ -54,7 +55,7 @@ void main()
 	if((bytes = write(file, &config[0], 2)) < 0)
 	//if(i2c_smbus_write_byte_data(file, 0x31, 0x08) < 0)
 	{
-		printf("write word 0x0831 failed with %d. \n", bytes);
+		printf("write word 0x0831 failed with %d error %s. \n", bytes, strerror(errno));
 		exit(1);
 	}
 	sleep(1);
@@ -65,7 +66,7 @@ void main()
 	if((bytes = write(file, &reg[0], 1)) < 0)
 	//if(i2c_smbus_write_byte_data(file, 0x53, reg) < 0)
 	{
-		printf("write word 0x0831 failed. \n");
+		printf("write word 0x0831 failed %d bytes %s. \n", bytes, strerror(errno));
 		exit(1);
 	} 
 	char data[6] ={0};

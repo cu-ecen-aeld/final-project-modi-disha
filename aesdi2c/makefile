@@ -5,7 +5,7 @@ ifeq ($CFLAGS),)
 	CFLAGS = -g -Wall -Werror
 endif
 ifeq ($(LDFLAGS),)
-	LDFLAGS = -pthread -lm
+	LDFLAGS = -pthread
 endif
 ifeq ($(INCLUDES),)
 	INCLUDES = -I/

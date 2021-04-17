@@ -17,7 +17,7 @@ lcd.o: lcd.c
 	$(CC) $(CFLAGS) -c lcd.c
 
 lcd: lcd.o
-	$(CC) $(CFLAGS) $(INCLUDES) lcd.o -o lcd $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INCLUDES) lcd.o -o lcd -lwiringPi -lwiringPiDev -pthread -lrt
 
 clean:
 	rm -f *.o

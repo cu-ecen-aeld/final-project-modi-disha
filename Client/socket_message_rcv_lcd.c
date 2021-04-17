@@ -52,7 +52,7 @@ int main (int argc, char **argv)
 			break;
 		}
 	}
-        lcd_print(in_buffer[i]);
+        lcd_print(&in_buffer[i]);
 
         printf ("Server: response printed on lcd.\n");
         token_number++;

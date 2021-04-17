@@ -5,7 +5,7 @@
 #
 ##############################################################
 
-AESDLCD_VERSION=9fc59974e1ba4d6ed81132fa5b12e0c1fe091946
+AESDLCD_VERSION=e0fefa44048ef78995e448429fe540e5d67b0d59
 # Note: Be sure to reference the *ssh* repository URL here (not https) to work properly
 # with ssh keys and the automated build/test system.
 # Your site should start with git@github.com:

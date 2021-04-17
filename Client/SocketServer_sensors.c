@@ -140,27 +140,27 @@ void i2c_sensor_read(int *xAccl, int *yAccl, int *zAccl)
 	
 	// Convert the data to 10-bits
 	*xAccl = ((data[1] & 0x03) * 256 + (data[0] & 0xFF));
-	if(xAccl > 511)
+	if(*xAccl > 511)
 	{
-		xAccl -= 1024;
+		*xAccl -= 1024;
 	}
 
 	*yAccl = ((data[3] & 0x03) * 256 + (data[2] & 0xFF));
-	if(yAccl > 511)
+	if(*yAccl > 511)
 	{
-		yAccl -= 1024;
+		*yAccl -= 1024;
 	}
 
 	*zAccl = ((data[5] & 0x03) * 256 + (data[4] & 0xFF));
-	if(zAccl > 511)
+	if(*zAccl > 511)
 	{
-		zAccl -= 1024;
+		*zAccl -= 1024;
 	}
 
 	// Output data to screen
-	printf("Acceleration in X-Axis : %d \n", xAccl);
-	printf("Acceleration in Y-Axis : %d \n", yAccl);
-	printf("Acceleration in Z-Axis : %d \n", zAccl);
+	printf("Acceleration in X-Axis : %d \n", *xAccl);
+	printf("Acceleration in Y-Axis : %d \n", *yAccl);
+	printf("Acceleration in Z-Axis : %d \n", *zAccl);
 	
 }
 /*****************************************************************/

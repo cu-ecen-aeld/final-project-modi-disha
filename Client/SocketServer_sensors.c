@@ -395,7 +395,7 @@ void* threadhandler2(void* thread_param)
 		time(&r_time);
 
 		int xa, xb, xc;
-		k = i2c_sensor_read(&xa, &xb, &xc);
+		i2c_sensor_read(&xa, &xb, &xc);
 		
 		timeinfo = localtime(&r_time);
 		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
@@ -404,7 +404,7 @@ void* threadhandler2(void* thread_param)
 
 		if((xa < 0) && (xb < 0) && (xc < 0))
 		{
-			sprintf(rdBuff, "%s !Alert S4: %d\n",buf, k);
+			sprintf(rdBuff, "%s !Alert S4: x:%d y:%d z:%d\n",buf, xa, xb, xc);
 		}
 		else
 		{

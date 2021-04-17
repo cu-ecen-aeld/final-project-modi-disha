@@ -290,7 +290,7 @@ int main (int argc, char **argv)
         lcd_print(&in_buffer[i]);
 
 	int j=0;
-	for(j=i; j<strlen(in_buffer); i++)
+	for(j=i; j<strlen(in_buffer); j++)
 	{
 		if(in_buffer[j] == '1' || in_buffer[j] == '2' || in_buffer[j] == '3' || in_buffer[j] == '4')
 		{

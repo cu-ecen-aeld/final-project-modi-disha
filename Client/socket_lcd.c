@@ -87,3 +87,13 @@ int lcd_print(char *msg)
   lcd_text(msg);
   return 0 ;
 }
+
+//int print_on_lcd(char *str) 
+int main() 
+{
+  lcd_init();
+  
+  SetChrMode(); 
+  lcd_text("Hello");
+  return 0 ;
+}

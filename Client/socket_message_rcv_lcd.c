@@ -34,6 +34,7 @@ int main (int argc, char **argv)
     }
     char in_buffer [MSG_BUFFER_SIZE];
     char out_buffer [MSG_BUFFER_SIZE];
+    lcd_init();
 
     while (1) {
         // get the oldest message with highest priority

@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include <lcd.h>
+#include "socket_lcd.h"
 #include <wiringPi.h>
 
 #define LCD_E 23

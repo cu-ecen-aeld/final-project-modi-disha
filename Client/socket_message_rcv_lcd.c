@@ -240,7 +240,7 @@ void lcd_init()
 int lcd_print(char *msg) 
 {
   lcd_byte(0x01);  //Clear screen
-  delay(3);        // clear screen is slow!
+  usleep(1000);        // clear screen is slow!
   SetChrMode(); 
   lcd_text(msg);
   return 0 ;
@@ -266,6 +266,8 @@ int main (int argc, char **argv)
     }
     char in_buffer [MSG_BUFFER_SIZE];
     char out_buffer [MSG_BUFFER_SIZE];
+
+    GPIOinit();
     lcd_init();
 
     while (1) {
@@ -288,20 +290,32 @@ int main (int argc, char **argv)
 
         lcd_print(&in_buffer[i]);
 	
-	if(in_buffer[i+8] == '1')
+	for(int j=i; j<strlen(in_buffer); i++)
 	{
+		if(in_buffer[j] == '1' || in_buffer[j] == '2' || in_buffer[j] == '3' || in_buffer[j] == '4')
+		{
+			break;
+		}
+	}
+	
+	if(in_buffer[j] == '1')
+	{
+		printf ("Sensor %d Alert to gpio\n", j);
 		gpio_write(POUT1);
 	}
-	else if(in_buffer[i+8] == '2')
+	else if(in_buffer[j] == '2')
 	{
+		printf ("Sensor %d Alert to gpio\n", j);
 		gpio_write(POUT2);
 	}
-	else if(in_buffer[i+8] == '3')
+	else if(in_buffer[j] == '3')
 	{
+		printf ("Sensor %d Alert to gpio\n", j);
 		gpio_write(POUT3);
 	}
-	else if(in_buffer[i+8] == '4')
+	else if(in_buffer[j] == '4')
 	{
+		printf ("Sensor %d Alert to gpio\n", j);
 		gpio_write(POUT4);
 	}
 

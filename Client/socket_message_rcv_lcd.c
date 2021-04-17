@@ -6,7 +6,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <mqueue.h>
-#include "socket_lcd.h"
 #include <wiringPi.h>
 
 #define LCD_E 23
@@ -147,7 +146,7 @@ GPIOWrite(int pin, int value)
 	return(0);
 }
 
-void GPIOinit()
+int GPIOinit()
 {
 
 	if (-1 == GPIOExport(POUT1) || -1 == GPIOExport(POUT2) || -1 == GPIOExport(POUT3) || -1 == GPIOExport(POUT4))
@@ -162,7 +161,7 @@ void GPIOinit()
 
 }
 
-void gpio_write(int pin)
+int gpio_write(int pin)
 {
 	if (-1 == GPIOWrite(pin, 1))
 			return(3);
@@ -289,8 +288,9 @@ int main (int argc, char **argv)
 	}
 
         lcd_print(&in_buffer[i]);
-	
-	for(int j=i; j<strlen(in_buffer); i++)
+
+	int j=0;
+	for(j=i; j<strlen(in_buffer); i++)
 	{
 		if(in_buffer[j] == '1' || in_buffer[j] == '2' || in_buffer[j] == '3' || in_buffer[j] == '4')
 		{

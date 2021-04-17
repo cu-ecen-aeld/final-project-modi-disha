@@ -1,7 +1,7 @@
 /* SocketClient application for AESD final project. This file implements Socket Client code 
  * which connects to the servers specified into the arguments.
  * Author: Disha Modi */
-
+// Ref for mqueue: https://www.softprayog.in/programming/interprocess-communication-using-posix-message-queues-in-linux
 /// Include Libraries ///
 #include<stdio.h>
 #include<stdlib.h>
@@ -26,13 +26,22 @@
 #include<sys/time.h>
 #include<time.h>
 #include<stdbool.h>
+#include<mqueue.h>
 
 #define PORT "9000"
 #define pFILE "/var/tmp/sensordata.txt"
 
+#define SERVER_QUEUE_NAME   "/aesd-server"
+#define QUEUE_PERMISSIONS 0660
+#define MAX_MESSAGES 25
+#define MAX_MSG_SIZE 256
+#define MSG_BUFFER_SIZE MAX_MSG_SIZE + 10
+
 uint8_t thread_count = 0;
 int signal_flag = 1;
 pthread_mutex_t socklock;
+
+mqd_t aesdqueue;
 
 // socket descriptor
 int socket_client;
@@ -98,10 +107,27 @@ void* threadhandler(void* thread_param)
         }
         else
         {
-    	 if(strcmp(rcv_cmd, "threshold reached") == 0)
+	   bool alert_flag = 0;
+	   int i = 0;
+	   for(i=0; i<strlen(rcv_cmd); i++)
+	   {
+		if(rcv_cmd[i] == '!')
+		{
+			alert_flag = 1;
+			break;
+		}
+	   }
+		
+    	 if(alert_flag)
     	 {
     		 send(socket_client, rcv_cmd, strlen(rcv_cmd), MSG_DONTWAIT);
+		 if (mq_send (aesdqueue, rcv_cmd, strlen (rcv_cmd) + 1, 0) == -1) 	             
+                {
+		    perror ("Client: Not able to send message to server");
+		}
+		
     	 }
+	 alert_flag = 0;
         }
  	
      close(fd);
@@ -125,6 +151,18 @@ int main(int argc, char *argv[])
 	  printf("mutex init failed.\n");
 	  return -1; 
   }
+
+ struct mq_attr attr;
+
+    attr.mq_flags = 0;
+    attr.mq_maxmsg = MAX_MESSAGES;
+    attr.mq_msgsize = MAX_MSG_SIZE;
+    attr.mq_curmsgs = 0;
+
+   if ((aesdqueue = mq_open (SERVER_QUEUE_NAME, O_WRONLY)) == -1) {
+        perror ("Client: mq_open (server)");
+        exit (1);
+    }
 
   struct addrinfo ref, *res;
   memset(&ref, 0, sizeof(ref));

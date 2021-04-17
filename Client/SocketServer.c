@@ -73,7 +73,14 @@ void* threadhandler1(void* thread_param)
 		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
 		
 	        pthread_mutex_lock(&socklock);	
-		sprintf(rdBuff, "%s sensor 1: %d\n",buf, k);
+		if(k > 40)
+		{
+			sprintf(rdBuff, "%s !Alert S1: %d\n",buf, k);
+		}
+		else
+		{
+			sprintf(rdBuff, "%s sensor 1: %d\n",buf, k);
+		}
 
 		rc = send(newfd, rdBuff, strlen(rdBuff), MSG_DONTWAIT);
 	        pthread_mutex_unlock(&socklock);
@@ -92,7 +99,7 @@ void* threadhandler2(void* thread_param)
 {
 //	printf("entering thread handler 2\n");
 	while(signal_flag){
-			/// LOG MSG TO SYSLOG: "Accepted connection from XXX"
+			
 		syslog(LOG_INFO, "Accepted connection from %s\n", s);
 		
 		int k=0,rc=0;
@@ -107,9 +114,16 @@ void* threadhandler2(void* thread_param)
 		timeinfo = localtime(&r_time);
 		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
 		
-        	pthread_mutex_lock(&socklock);	
-		sprintf(rdBuff, "%s sensor 2: %d\n",buf, k);
-		//printf("%d %s\n",k,rdBuff);
+        	pthread_mutex_lock(&socklock);
+		if(k > 40)
+		{
+			sprintf(rdBuff, "%s !Alert S2: %d\n",buf, k);
+		}
+		else
+		{	
+			sprintf(rdBuff, "%s sensor 2: %d\n",buf, k);
+		}
+		
 		rc = send(newfd, rdBuff, strlen(rdBuff), MSG_DONTWAIT);
         	pthread_mutex_unlock(&socklock);
 		if( rc < 0){

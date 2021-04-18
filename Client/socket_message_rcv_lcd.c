@@ -286,8 +286,8 @@ int main (int argc, char **argv)
 			break;
 		}
 	}
-
-        lcd_print(&in_buffer[i]);
+	
+        
 
 	int j=0;
 	for(j=i; j<strlen(in_buffer); j++)
@@ -297,25 +297,40 @@ int main (int argc, char **argv)
 			break;
 		}
 	}
-	
+
+	if(in_buffer[j] == '4')
+	{
+		for(int z = i; z <= j; z++)
+		{
+			out_buffer[z] = in_buffer[z];
+		}
+		lcd_print(&out_buffer[i]);
+		printf ("LCD message %s\n", &out_buffer[i]);
+	}
+	else
+	{
+	  	lcd_print(&in_buffer[i]);
+		printf ("LCD message %s\n", &in_buffer[i]);
+	}
+
 	if(in_buffer[j] == '1')
 	{
-		printf ("Sensor %d Alert to gpio\n", j);
+		printf ("Sensor 1 Alert to gpio\n", j);
 		gpio_write(POUT1);
 	}
 	else if(in_buffer[j] == '2')
 	{
-		printf ("Sensor %d Alert to gpio\n", j);
+		printf ("Sensor 2 Alert to gpio\n", j);
 		gpio_write(POUT2);
 	}
 	else if(in_buffer[j] == '3')
 	{
-		printf ("Sensor %d Alert to gpio\n", j);
+		printf ("Sensor 3 Alert to gpio\n", j);
 		gpio_write(POUT3);
 	}
 	else if(in_buffer[j] == '4')
 	{
-		printf ("Sensor %d Alert to gpio\n", j);
+		printf ("Sensor 4 Alert to gpio\n", j);
 		gpio_write(POUT4);
 	}
 

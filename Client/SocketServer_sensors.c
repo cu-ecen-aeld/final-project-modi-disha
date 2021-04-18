@@ -315,7 +315,7 @@ double distance;
 
 	diff = stop -start;
 
-	distance = (diff/580.8) * 100;
+	distance = (diff/580.8) * 10;
 	printf(" distance %f\n", distance);
 
 	return distance;

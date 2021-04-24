@@ -192,16 +192,17 @@ static int GPIOExport(int pin)
 	ssize_t bytes_written;
 	int fd;
 
-fd = open("/sys/class/gpio/export", O_WRONLY);
-if (-1 == fd) {
-	fprintf(stderr, "Failed to open export for writing!\n");
-	return(-1);
-}
+	fd = open("/sys/class/gpio/export", O_WRONLY);
+	if (-1 == fd) 
+	{
+		fprintf(stderr, "Failed to open export for writing!\n");
+		return(-1);
+	}
 
-bytes_written = snprintf(buffer, BUFFER_MAX, "%d", pin);
-write(fd, buffer, bytes_written);
-close(fd);
-return(0);
+	bytes_written = snprintf(buffer, BUFFER_MAX, "%d", pin);
+	write(fd, buffer, bytes_written);
+	close(fd);
+	return(0);
 }
 
 static int
@@ -404,7 +405,7 @@ void* threadhandler1(void* thread_param)
 }
 
 
-/// Thread handler writes pseudo sensor 1 data to the socket
+/// Thread handler writes I2C sensor data to the socket
 void* threadhandler2(void* thread_param)
 {
 	/// Execute thread until sigint or sigterm
@@ -522,12 +523,12 @@ int main(int argc, char *argv[])
 
 	pthread_t thread1, thread2; 
 
-  while(signal_flag)
-  {
+        while(signal_flag)
+	{
 
 	socklen_t addr_size = sizeof(opp_addr);
 		
-		/// accept socket connection
+	/// accept socket connection
 	newfd = accept(sockfd, (struct sockaddr *)&opp_addr, &addr_size);
 	if(newfd < 0)
 	{
@@ -536,29 +537,28 @@ int main(int argc, char *argv[])
 		{
 			break;
 		}
-         exit (EXIT_FAILURE);
+                exit (EXIT_FAILURE);
 	}
 		
-	inet_ntop(opp_addr.ss_family, get_in_addr((struct sockaddr *)&opp_addr),
-                  s, sizeof s);
+	inet_ntop(opp_addr.ss_family, get_in_addr((struct sockaddr *)&opp_addr), s, sizeof s);
 	
-    threadParams[0].threadIdx = 1;
+        threadParams[0].threadIdx = 1;
 	threadParams[1].threadIdx = 2;
 	
 	/// create pthread and pass thread index
 	if((pthread_create(&thread1, NULL, &threadhandler1, (void *)&(threadParams[0]))) != 0)
 	{
 		printf("thread1 creation failed\n");
-	  syslog(LOG_ERR, "pthread create failed.");
-	  return -1;
+		syslog(LOG_ERR, "pthread create failed.");
+	        return -1;
 	}
 	
 	/// create pthread and pass socket id, and global mutex in thread arguments
 	if((pthread_create(&thread2, NULL, &threadhandler2, (void *)&(threadParams[1]))) != 0)
 	{
 		printf("thread2 creation failed\n");
-	  syslog(LOG_ERR, "pthread create failed.");
-	  return -1;
+	        syslog(LOG_ERR, "pthread create failed.");
+	        return -1;
 	}	
 	
 	 pthread_join(thread1, NULL);

@@ -243,8 +243,6 @@ int main (int argc, char **argv)
 {
 
     printf ("Server: Hello, World!\n");
-
-    char in_buffer [MSG_BUFFER_SIZE];
     char *out_buffer ;
 
    // GPIOinit();
@@ -267,6 +265,5 @@ int main (int argc, char **argv)
 	printf ("Hello Girls!");
 
         printf ("Server: response printed on lcd.\n");
-        token_number++;
     }
 }

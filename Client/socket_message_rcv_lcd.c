@@ -246,8 +246,6 @@ int lcd_print(char *msg)
   sleep(2);        // clear screen is slow!
   SetChrMode(); 
   lcd_text(msg);
-  *msg = "  ";
-  lcd_text(msg);
   return 0 ;
 }
 

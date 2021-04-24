@@ -11,7 +11,7 @@ ifeq ($(INCLUDES),)
 	INCLUDES = -I/
 endif
 
-all: SocketClient SocketServer socket_lcd socket_message_rcv socket_message_rcv_lcd SocketServer_sensors
+all: SocketClient SocketServer socket_lcd socket_message_rcv socket_message_rcv_lcd SocketServer_sensors q_msg_lcd
 
 SocketServer.o: SocketServer.c
 	$(CC) $(CFLAGS) -c SocketServer.c
@@ -55,7 +55,13 @@ SocketServer_sensors.o: SocketServer_sensors.c
 SocketServer_sensors: SocketServer_sensors.o
 	$(CC) $(CFLAGS) $(INCLUDES) SocketServer_sensors.o -o SocketServer_sensors $(LDFLAGS)
 
+q_msg_lcd.o: q_msg_lcd.c
+	$(CC) $(CFLAGS) -c q_msg_lcd.c
+
+q_msg_lcd: q_msg_lcd.o
+	$(CC) $(CFLAGS) $(INCLUDES) q_msg_lcd.o -o q_msg_lcd -lwiringPi -lwiringPiDev -pthread -lrt
+
 clean:
 	rm -f *.o
-	rm -f SocketClient socket_lcd socket_message_rcv socket_message_rcv_lcd SocketServer_sensors
+	rm -f SocketClient socket_lcd socket_message_rcv socket_message_rcv_lcd SocketServer_sensors q_msg_lcd
 	rm -f SocketServer 

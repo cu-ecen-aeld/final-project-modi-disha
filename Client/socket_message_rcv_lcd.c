@@ -1,5 +1,5 @@
 /* socket_message_rcv_lcd application for AESD final project. This file implements 
- * POSIX message queue message receive code 
+ * POSIX message queue message receive code and LCD printing code.
  * which accepts connection from the client.
  * Author: Disha Modi */
 #include <stdio.h>
@@ -239,16 +239,18 @@ void lcd_init()
    delay(3);        // clear screen is slow!
 }
 
-//int print_on_lcd(char *str) 
+// lcd_print function print text on lcd
 int lcd_print(char *msg) 
 {
   lcd_byte(0x01);  //Clear screen
   sleep(2);        // clear screen is slow!
   SetChrMode(); 
   lcd_text(msg);
+  lcd_text("  ");
   return 0 ;
 }
 
+/// main function to receive message from queue and print on LCD.
 int main (int argc, char **argv)
 {
     mqd_t lcdqueue;   // queue descriptors
@@ -263,6 +265,7 @@ int main (int argc, char **argv)
     attr.mq_msgsize = MAX_MSG_SIZE;
     attr.mq_curmsgs = 0;
 
+    // open the queue in read mode
     if ((lcdqueue = mq_open (SERVER_QUEUE_NAME, O_RDONLY | O_CREAT, QUEUE_PERMISSIONS, &attr)) == -1) {
         perror ("Server: mq_open (server)");
         exit (1);
@@ -273,7 +276,9 @@ int main (int argc, char **argv)
     GPIOinit();
     lcd_init();
 
-    while (1) {
+    // receive the messages until queue contains any messages
+    while (1) 
+    {
         // get the oldest message with highest priority
         if (mq_receive (lcdqueue, in_buffer, MSG_BUFFER_SIZE, NULL) == -1) {
             perror ("Server: mq_receive");
@@ -291,8 +296,6 @@ int main (int argc, char **argv)
 		}
 	}
 	
-        
-
 	int j=0;
 	for(j=i; j<strlen(in_buffer); j++)
 	{
@@ -302,6 +305,7 @@ int main (int argc, char **argv)
 		}
 	}
 
+	// print on LCD
 	if(in_buffer[j] == '4')
 	{
 		for(int z = i; z <= j; z++)

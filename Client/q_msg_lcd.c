@@ -232,10 +232,14 @@ void lcd_init()
 //int print_on_lcd(char *str) 
 int lcd_print(char *msg) 
 {
+  SetCmdMode(); // set for commands
   lcd_byte(0x01);  //Clear screen
-  sleep(2);        // clear screen is slow!
+  lcd_byte(0x02);
+  lcd_byte(0x80);  // set home loc
+  sleep(1);        // clear screen is slow!
   SetChrMode(); 
   lcd_text(msg);
+  lcd_text("                                ");
   return 0 ;
 }
 

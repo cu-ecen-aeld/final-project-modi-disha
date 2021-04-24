@@ -1,3 +1,7 @@
+/* socket_message_rcv_lcd application for AESD final project. This file implements 
+ * POSIX message queue message receive code 
+ * which accepts connection from the client.
+ * Author: Disha Modi */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -239,8 +243,10 @@ void lcd_init()
 int lcd_print(char *msg) 
 {
   lcd_byte(0x01);  //Clear screen
-  usleep(1000);        // clear screen is slow!
+  sleep(2);        // clear screen is slow!
   SetChrMode(); 
+  lcd_text(msg);
+  *msg = "  ";
   lcd_text(msg);
   return 0 ;
 }
@@ -315,22 +321,22 @@ int main (int argc, char **argv)
 
 	if(in_buffer[j] == '1')
 	{
-		printf ("Sensor 1 Alert to gpio\n", j);
+		printf ("Sensor 1 Alert to gpio\n");
 		gpio_write(POUT1);
 	}
 	else if(in_buffer[j] == '2')
 	{
-		printf ("Sensor 2 Alert to gpio\n", j);
+		printf ("Sensor 2 Alert to gpio\n");
 		gpio_write(POUT2);
 	}
 	else if(in_buffer[j] == '3')
 	{
-		printf ("Sensor 3 Alert to gpio\n", j);
+		printf ("Sensor 3 Alert to gpio\n");
 		gpio_write(POUT3);
 	}
 	else if(in_buffer[j] == '4')
 	{
-		printf ("Sensor 4 Alert to gpio\n", j);
+		printf ("Sensor 4 Alert to gpio\n");
 		gpio_write(POUT4);
 	}
 

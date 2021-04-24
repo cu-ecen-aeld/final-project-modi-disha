@@ -1,47 +1,50 @@
 /* SocketServer application for AESD final project. This file implements Socket Server code 
  * which accepts connection from the client.
  * Author: Disha Modi */
+/* @Ref doc for I2C: https://github.com/ControlEverythingCommunity/ADXL345/blob/master/C/ADXL345.c */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<errno.h>
-#include<linux/fs.h>
-#include<fcntl.h>
-#include<unistd.h>
-#include<signal.h>
-#include<libgen.h>
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<sys/types.h>
-#include<sys/socket.h>
-#include<netinet/in.h>
-#include<arpa/inet.h>
-#include<string.h>
-#include<netdb.h>
-#include<syslog.h>
-#include<pthread.h>
-#include<sys/queue.h>
-#include<sys/time.h>
-#include<time.h>
-#include<stdbool.h>
+/** Include libraries **/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <linux/fs.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <signal.h>
+#include <libgen.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <string.h>
+#include <netdb.h>
+#include <syslog.h>
+#include <pthread.h>
+#include <sys/queue.h>
+#include <sys/time.h>
+#include <time.h>
+#include <stdbool.h>
 #include <time.h>
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
 
+// Socket communication port
 #define PORT "9000"
 #define BACKLOG 10
 
+// GPIO Pins and Directions
 #define IN  0
 #define OUT 1
-
 #define LOW  0
 #define HIGH 1
 
-#define ECHO 20 /* GPIO 20 */
-#define TRIG 21  /* GPIO 21 */
+#define ECHO 20 /* GPIO 20 on RPi 3 */
+#define TRIG 21  /* GPIO 21 on RPi 3 */
 
-
+// Globals for socket programming
 int sockfd, newfd;
 char s[INET6_ADDRSTRLEN];
 int signal_flag =1;
@@ -52,13 +55,15 @@ char rdBuff[80] = {'\0'};
 void handle_sig(int sig)
 {
   signal_flag=0;
+
   if(sig == SIGINT)
-    syslog(LOG_DEBUG,"Caught SIGINT Signal exiting\n");
+    syslog(LOG_DEBUG, "Caught SIGINT Signal exiting\n");
   if(sig == SIGTERM)
-    syslog(LOG_DEBUG,"Caught SIGTERM Signal exiting\n"); 
+    syslog(LOG_DEBUG, "Caught SIGTERM Signal exiting\n"); 
 
   shutdown(newfd,SHUT_RDWR);
   shutdown(sockfd,SHUT_RDWR);
+
   _exit(0);
 }
 
@@ -74,85 +79,96 @@ void i2c_sensor_read(int *xAccl, int *yAccl, int *zAccl)
 {
 	// Create I2C bus
 	int i2c_file;
-	char *bus = (char*)"/dev/i2c-1";
-	if ((i2c_file = open(bus, O_RDWR)) < 0) 
+	char *bus = (char*)"/dev/i2c-1"; // i2c-1
+        int bytes = 0;
+
+	// Open i2c-1 for read-write
+	if(( i2c_file = open(bus, O_RDWR)) < 0 ) 
 	{
-		printf("Failed to open the bus. \n");
-		exit(1);
-	}
-	// Get I2C device, ADXL345 I2C address is 0x53(83)
-	if(ioctl(i2c_file, I2C_SLAVE, 0x53) < 0)
-	{
-		printf("ioctl 0x53 failed. \n");
+		printf("Failed to open the bus.\n");
 		exit(1);
 	}
 
-	// Select Bandwidth rate register(0x2C)
-	// Normal mode, Output data rate = 100 Hz(0x0A)
+	// ADXL345 I2C sensor device address is 0x53(83)
+	if( ioctl(i2c_file, I2C_SLAVE, 0x53) < 0 )
+	{
+		printf("ioctl 0x53 failed.\n");
+		exit(1);
+	}
+
+	/// Select Bandwidth rate register(0x2C)
+	/// Normal mode, Output data rate = 100 Hz(0x0A)
 	char config[2]={0};
 	config[0] = 0x2C;
 	config[1] = 0x0A;
-        int bytes = 0;
-	if((bytes = write(i2c_file, &config[0], 2)) < 0)
-	//if(i2c_smbus_write_byte_data(file, 0x2C, 0x0A) < 0)
+
+	if(( bytes = write(i2c_file, &config[0], 2)) < 0 )
 	{
 		printf("write word 0x0a2c failed with %d error %s. \n", bytes, strerror(errno));
 		exit(1);
 	}
+
 	// Select Power control register(0x2D)
 	// Auto-sleep disable(0x08)
 	config[0] = 0x2D;
 	config[1] = 0x08;
-	if((bytes = write(i2c_file, &config[0], 2)) < 0)
-	//if(i2c_smbus_write_byte_data(file, 0x2D, 0x08) < 0)
+
+	if(( bytes = write(i2c_file, &config[0], 2)) < 0 )
 	{
 		printf("write word 0x082d failed with %d error %s. \n", bytes, strerror(errno));
 		exit(1);
 	}
+
 	// Select Data format register(0x31)
 	// Self test disabled, 4-wire interface, Full resolution, range = +/-2g(0x08)
 	config[0] = 0x31;
 	config[1] = 0x08;
-	if((bytes = write(i2c_file, &config[0], 2)) < 0)
-	//if(i2c_smbus_write_byte_data(file, 0x31, 0x08) < 0)
+
+	if(( bytes = write(i2c_file, &config[0], 2)) < 0 )
 	{
 		printf("write word 0x0831 failed with %d error %s. \n", bytes, strerror(errno));
 		exit(1);
 	}
+
+	/// Sensor processing time
 	sleep(1);
 
 	// Read 6 bytes of data from register(0x32)
 	// xAccl lsb, xAccl msb, yAccl lsb, yAccl msb, zAccl lsb, zAccl msb
 	char reg[1] = {0x32};
-	if((bytes = write(i2c_file, &reg[0], 1)) < 0)
-	//if(i2c_smbus_write_byte_data(file, 0x53, reg) < 0)
+
+	if(( bytes = write(i2c_file, &reg[0], 1)) < 0 )
 	{
 		printf("write word 0x0831 failed %d bytes %s. \n", bytes, strerror(errno));
 		exit(1);
 	} 
+
 	char data[6] ={0};
 
-	if((bytes = read(i2c_file, &data[0], 6)) != 6)
+	if(( bytes = read(i2c_file, &data[0], 6)) != 6 )
 	{
-		printf("Erorr : Input/output Erorr %s \n", strerror(errno));
+		printf("Erorr : Input/output read Erorr %s \n", strerror(errno));
 		exit(1);
 	}
 	
 	// Convert the data to 10-bits
-	*xAccl = ((data[1] & 0x03) * 256 + (data[0] & 0xFF));
-	if(*xAccl > 511)
+	*xAccl = (( data[1] & 0x03) * 256 + (data[0] & 0xFF ));
+
+	if( *xAccl > 511 )
 	{
 		*xAccl -= 1024;
 	}
 
-	*yAccl = ((data[3] & 0x03) * 256 + (data[2] & 0xFF));
-	if(*yAccl > 511)
+	*yAccl = (( data[3] & 0x03) * 256 + (data[2] & 0xFF ));
+
+	if( *yAccl > 511 )
 	{
 		*yAccl -= 1024;
 	}
 
-	*zAccl = ((data[5] & 0x03) * 256 + (data[4] & 0xFF));
-	if(*zAccl > 511)
+	*zAccl = (( data[5] & 0x03) * 256 + (data[4] & 0xFF ));
+
+	if( *zAccl > 511 )
 	{
 		*zAccl -= 1024;
 	}
@@ -165,16 +181,16 @@ void i2c_sensor_read(int *xAccl, int *yAccl, int *zAccl)
 }
 /*****************************************************************/
 
+
 /***********************************************************/
 // GPIO CODE //
 
-static int
-GPIOExport(int pin)
+static int GPIOExport(int pin)
 {
-#define BUFFER_MAX 3
-char buffer[BUFFER_MAX];
-ssize_t bytes_written;
-int fd;
+	#define BUFFER_MAX 3
+	char buffer[BUFFER_MAX];
+	ssize_t bytes_written;
+	int fd;
 
 fd = open("/sys/class/gpio/export", O_WRONLY);
 if (-1 == fd) {
@@ -281,7 +297,7 @@ close(fd);
 return(0);
 }
 
-
+/// getTimeUsec function to get current time
 double getTimeUsec(void) 
 { 
 	struct timespec event_ts = {0, 0}; 
@@ -289,42 +305,10 @@ double getTimeUsec(void)
 	return ((event_ts.tv_sec)* (int)1e6) + ((event_ts.tv_nsec)/1000.0); 
 } 
 
-int read_sensor_data(){
 
-double start;
-double stop;
-double diff;
-double distance;
-
-	if (-1 == GPIOWrite(TRIG, 1))
-		return(3);
-	usleep(30);
-	if (-1 == GPIOWrite(TRIG, 0))
-	 return(3);
-
-/*
-* Read GPIO value
-*/
-
-	start = getTimeUsec();
-	printf(" start %f\n", start);
-	while(GPIORead(ECHO)==1);
-	stop = getTimeUsec();
-	
-	printf(" stop %f\n", stop);
-
-	diff = stop -start;
-
-	distance = (diff/580.8) * 10;
-	printf(" distance %f\n", distance);
-
-	return distance;
-
-}
-
-
-int GPIO_init(){
-
+/// GPIO_init function to initialize GPIO pins
+int GPIO_init()
+{
 	/* Enable GPIO pins*/
 	if (-1 == GPIOExport(TRIG) || -1 == GPIOExport(ECHO))
 		return(1);
@@ -333,16 +317,53 @@ int GPIO_init(){
 	/* Set GPIO directions */
 	if (-1 == GPIODirection(TRIG, OUT) || -1 == GPIODirection(ECHO, IN))
 		return(2);
-
-
-
 }
+
+
+/// read_sensor_data function reads GPIO pin output 
+int read_sensor_data()
+{
+	double start;
+	double stop;
+	double diff;
+	double distance;
+
+	if (-1 == GPIOWrite(TRIG, 1))
+		return(3);
+
+	usleep(30);
+
+	if (-1 == GPIOWrite(TRIG, 0))
+	 	return(3);
+
+	// Read GPIO value
+	/* For ultrasonic sensor calculating the time 
+	   ECHO pin is staying high */
+	start = getTimeUsec();
+	printf(" start %f\n", start);
+
+	while(GPIORead(ECHO)==1);
+
+	stop = getTimeUsec();	
+	printf(" stop %f\n", stop);
+
+	diff = stop -start;
+
+	distance = (diff/580.8) * 10;
+	printf(" distance %f\n", distance);
+
+	return distance;
+}
+
 /***********************************************************************/
 
-/// Thread handler writes pseudo sensor 1 data to the socket
+
+/// Thread handler writes GPIO sensor 1 data to the socket
 void* threadhandler1(void* thread_param)
 {
-   GPIO_init();
+   	GPIO_init();
+	
+	/// Execute thread until sigint or sigterm
 	while(signal_flag)
 	{	
 		int k=0, rc=0;
@@ -352,12 +373,13 @@ void* threadhandler1(void* thread_param)
 		char buf[30];
 		time(&r_time);
 
+		/// read sensor data
 		k = read_sensor_data();
 		
 		timeinfo = localtime(&r_time);
 		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
 		
-	        pthread_mutex_lock(&socklock);	
+	        pthread_mutex_lock(&socklock); /// protect rdBuff as it is shared  	
 		if(k < 10)
 		{
 			sprintf(rdBuff, "%s !Alert S3: %d\n",buf, k);
@@ -366,9 +388,12 @@ void* threadhandler1(void* thread_param)
 		{
 			sprintf(rdBuff, "%s sensor 3: %d\n",buf, k);
 		}
-
+		
+		/// send the data over socket
 		rc = send(newfd, rdBuff, strlen(rdBuff), MSG_DONTWAIT);
+
 	        pthread_mutex_unlock(&socklock);
+
 		if( rc < 0){
 		  perror("Couldnt send sensor results to file\n");
 		}
@@ -382,9 +407,10 @@ void* threadhandler1(void* thread_param)
 /// Thread handler writes pseudo sensor 1 data to the socket
 void* threadhandler2(void* thread_param)
 {
-//	printf("entering thread handler 2\n");
-	while(signal_flag){
-			/// LOG MSG TO SYSLOG: "Accepted connection from XXX"
+	/// Execute thread until sigint or sigterm
+	while(signal_flag)
+	{
+		/// LOG MSG TO SYSLOG: "Accepted connection from XXX"
 		syslog(LOG_INFO, "Accepted connection from %s\n", s);
 		
 		int k=0,rc=0;
@@ -395,7 +421,7 @@ void* threadhandler2(void* thread_param)
 		time(&r_time);
 
 		int xa, xb, xc;
-		i2c_sensor_read(&xa, &xb, &xc);
+		i2c_sensor_read(&xa, &xb, &xc); 
 		
 		timeinfo = localtime(&r_time);
 		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
@@ -419,7 +445,7 @@ void* threadhandler2(void* thread_param)
 	
 		sleep(1);
 	}
-//	printf("exiting pthread 2\n");
+
 	pthread_exit((void *)0);
 }
 

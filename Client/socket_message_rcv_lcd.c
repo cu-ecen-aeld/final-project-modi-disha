@@ -309,7 +309,7 @@ int main (int argc, char **argv)
 	}
 
 	// print on LCD
-	if(in_buffer[j] == '4')
+	if(in_buffer[j] == '3' || in_buffer[j] == '4')
 	{
 		for(int z = i; z <= j; z++)
 		{

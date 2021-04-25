@@ -231,8 +231,6 @@ void lcd_init()
 
 int lcd_print(char *msg) 
 {
-  SetChrMode(); 
-  lcd_text(msg);
   SetCmdMode(); // set for commands
   delay(2000);
   lcd_byte(0x01, 0);  //Clear screen
@@ -240,6 +238,9 @@ int lcd_print(char *msg)
   lcd_byte(0x02, 0);
   delay(2000);
   lcd_byte(0x80, 0);  // set home loc
+  delay(2000);
+  SetChrMode(); 
+  lcd_text(msg);
   return 0 ;
 }
 

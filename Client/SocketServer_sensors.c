@@ -317,7 +317,7 @@ int GPIO_init()
 
 
 /// read_sensor_data function reads GPIO pin output 
-int read_sensor_data()
+double read_sensor_data()
 {
 	double start;
 	double stop;
@@ -362,7 +362,8 @@ void* threadhandler1(void* thread_param)
 	/// Execute thread until sigint or sigterm
 	while(signal_flag)
 	{	
-		int k=0, rc=0;
+		double k=0; 
+		int rc=0;
 
 		time_t r_time;
 		struct tm *timeinfo;
@@ -378,11 +379,11 @@ void* threadhandler1(void* thread_param)
 	        pthread_mutex_lock(&socklock); /// protect rdBuff as it is shared  	
 		if(k < 60)
 		{
-			sprintf(rdBuff, "%s !Alert S3: %d\n",buf, k);
+			sprintf(rdBuff, "%s !Alert S3: %f\n",buf, k);
 		}
 		else
 		{
-			sprintf(rdBuff, "%s sensor 3: %d\n",buf, k);
+			sprintf(rdBuff, "%s sensor 3: %f\n",buf, k);
 		}
 		
 		/// send the data over socket

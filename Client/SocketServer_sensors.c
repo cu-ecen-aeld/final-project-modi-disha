@@ -376,7 +376,7 @@ void* threadhandler1(void* thread_param)
 		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
 		
 	        pthread_mutex_lock(&socklock); /// protect rdBuff as it is shared  	
-		if(k < 18)
+		if(k < 16)
 		{
 			sprintf(rdBuff, "%s !Alert S3: %d\n",buf, k);
 		}

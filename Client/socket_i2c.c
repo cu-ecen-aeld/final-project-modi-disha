@@ -1,4 +1,3 @@
-
 //@Ref: https://github.com/ControlEverythingCommunity/ADXL345/blob/master/C/ADXL345.c
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,7 +33,6 @@ void main()
 	config[1] = 0x0A;
         int bytes = 0;
 	if((bytes = write(i2c_file, &config[0], 2)) < 0)
-	//if(i2c_smbus_write_byte_data(file, 0x2C, 0x0A) < 0)
 	{
 		printf("write word 0x0a2c failed with %d error %s. \n", bytes, strerror(errno));
 		exit(1);
@@ -44,7 +42,6 @@ void main()
 	config[0] = 0x2D;
 	config[1] = 0x08;
 	if((bytes = write(i2c_file, &config[0], 2)) < 0)
-	//if(i2c_smbus_write_byte_data(file, 0x2D, 0x08) < 0)
 	{
 		printf("write word 0x082d failed with %d error %s. \n", bytes, strerror(errno));
 		exit(1);
@@ -54,7 +51,6 @@ void main()
 	config[0] = 0x31;
 	config[1] = 0x08;
 	if((bytes = write(i2c_file, &config[0], 2)) < 0)
-	//if(i2c_smbus_write_byte_data(file, 0x31, 0x08) < 0)
 	{
 		printf("write word 0x0831 failed with %d error %s. \n", bytes, strerror(errno));
 		exit(1);
@@ -65,7 +61,6 @@ void main()
 	// xAccl lsb, xAccl msb, yAccl lsb, yAccl msb, zAccl lsb, zAccl msb
 	char reg[1] = {0x32};
 	if((bytes = write(i2c_file, &reg[0], 1)) < 0)
-	//if(i2c_smbus_write_byte_data(file, 0x53, reg) < 0)
 	{
 		printf("write word 0x0831 failed %d bytes %s. \n", bytes, strerror(errno));
 		exit(1);
@@ -78,14 +73,6 @@ void main()
 		exit(1);
 	}
 
-	/*
-	data[0] = i2c_smbus_read_byte_data(file, 0x32);
-	data[1] = i2c_smbus_read_byte_data(file, 0x33);
-	data[2] = i2c_smbus_read_byte_data(file, 0x34);
-	data[3] = i2c_smbus_read_byte_data(file, 0x35);
-	data[4] = i2c_smbus_read_byte_data(file, 0x36);
-	data[5] = i2c_smbus_read_byte_data(file, 0x37); */
-	
 	// Convert the data to 10-bits
 	int xAccl = ((data[1] & 0x03) * 256 + (data[0] & 0xFF));
 	if(xAccl > 511)

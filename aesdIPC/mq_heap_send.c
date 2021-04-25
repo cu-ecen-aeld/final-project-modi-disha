@@ -1,3 +1,8 @@
+/* Message Queue application for AESD final project. This file implements Message queue send code 
+ * Author: Disha Modi */
+// Ref: https://www.softprayog.in/programming/interprocess-communication-using-posix-message-queues-in-linux
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,20 +47,6 @@ int main (int argc, char **argv)
         }
 
         printf ("Server: message received %s.\n", in_buffer);
-
-        // send reply message to client
-
-    /*    if ((qd_client = mq_open (in_buffer, O_WRONLY)) == 1) {
-            perror ("Server: Not able to open client queue");
-            continue;
-        } */
-
-    //    sprintf (out_buffer, "%ld", token_number);
-
-    /*    if (mq_send (qd_client, out_buffer, strlen (out_buffer) + 1, 0) == -1) {
-            perror ("Server: Not able to send message to client");
-            continue;
-        } */
 
         printf ("Server: response sent to client.\n");
         token_number++;

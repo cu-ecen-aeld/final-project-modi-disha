@@ -1,10 +1,4 @@
-/* blink.c
- *
- * Raspberry Pi GPIO example using sysfs interface.
- * Guillermo A. Amaral B. <g@maral.me>
- *
- * This file blinks GPIO 4 (P1-07) while reading GPIO 24 (P1_18).
- */
+/* Ref: https://elinux.org/RPi_GPIO_Code_Samples  */
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -21,11 +15,13 @@
 
 #define PIN  24 /* P1-18 */
 #define POUT 4  /* P1-07 */
-
-static int
-GPIOExport(int pin)
-{
 #define BUFFER_MAX 3
+#define DIRECTION_MAX 35
+#define VALUE_MAX 30
+
+static int GPIOExport(int pin)
+{
+
 	char buffer[BUFFER_MAX];
 	ssize_t bytes_written;
 	int fd;
@@ -42,8 +38,7 @@ GPIOExport(int pin)
 	return(0);
 }
 
-static int
-GPIOUnexport(int pin)
+static int GPIOUnexport(int pin)
 {
 	char buffer[BUFFER_MAX];
 	ssize_t bytes_written;
@@ -61,12 +56,9 @@ GPIOUnexport(int pin)
 	return(0);
 }
 
-static int
-GPIODirection(int pin, int dir)
+static int GPIODirection(int pin, int dir)
 {
 	static const char s_directions_str[]  = "in\0out";
-
-#define DIRECTION_MAX 35
 	char path[DIRECTION_MAX];
 	int fd;
 
@@ -86,10 +78,9 @@ GPIODirection(int pin, int dir)
 	return(0);
 }
 
-static int
-GPIORead(int pin)
+static int GPIORead(int pin)
 {
-#define VALUE_MAX 30
+
 	char path[VALUE_MAX];
 	char value_str[3];
 	int fd;
@@ -107,15 +98,12 @@ GPIORead(int pin)
 	}
 
 	close(fd);
-
 	return(atoi(value_str));
 }
 
-static int
-GPIOWrite(int pin, int value)
+static int GPIOWrite(int pin, int value)
 {
 	static const char s_values_str[] = "01";
-
 	char path[VALUE_MAX];
 	int fd;
 
@@ -135,42 +123,30 @@ GPIOWrite(int pin, int value)
 	return(0);
 }
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	int repeat = 10;
 
-	/*
-	 * Enable GPIO pins
-	 */
+	// Enable GPIO pins
 	if (-1 == GPIOExport(POUT) || -1 == GPIOExport(PIN))
 		return(1);
 
-	/*
-	 * Set GPIO directions
-	 */
+	// Set GPIO directions
 	if (-1 == GPIODirection(POUT, OUT) || -1 == GPIODirection(PIN, IN))
 		return(2);
 
 	do {
-		/*
-		 * Write GPIO value
-		 */
+		// Write GPIO value
 		if (-1 == GPIOWrite(POUT, repeat % 2))
 			return(3);
 
-		/*
-		 * Read GPIO value
-		 */
+		// Read GPIO value
 		printf("I'm reading %d in GPIO %d\n", GPIORead(PIN), PIN);
-
 		usleep(500 * 1000);
 	}
 	while (repeat--);
 
-	/*
-	 * Disable GPIO pins
-	 */
+	// Disable GPIO pins
 	if (-1 == GPIOUnexport(POUT) || -1 == GPIOUnexport(PIN))
 		return(4);
 

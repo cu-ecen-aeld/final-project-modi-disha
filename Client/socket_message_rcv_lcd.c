@@ -2,6 +2,8 @@
  * POSIX message queue message receive code and LCD printing code.
  * which accepts connection from the client.
  * Author: Disha Modi */
+/* Message Queue Ref: https://www.softprayog.in/programming/interprocess-communication-using-posix-message-queues-in-linux */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,8 +39,7 @@
 #define POUT3 13
 #define POUT4 19
 
-static int
-GPIOExport(int pin)
+static int GPIOExport(int pin)
 {
 #define BUFFER_MAX 3
 	char buffer[BUFFER_MAX];
@@ -57,8 +58,7 @@ GPIOExport(int pin)
 	return(0);
 }
 
-static int
-GPIOUnexport(int pin)
+static int GPIOUnexport(int pin)
 {
 	char buffer[BUFFER_MAX];
 	ssize_t bytes_written;
@@ -76,8 +76,7 @@ GPIOUnexport(int pin)
 	return(0);
 }
 
-static int
-GPIODirection(int pin, int dir)
+static int GPIODirection(int pin, int dir)
 {
 	static const char s_directions_str[]  = "in\0out";
 
@@ -101,8 +100,7 @@ GPIODirection(int pin, int dir)
 	return(0);
 }
 
-static int
-GPIORead(int pin)
+static int GPIORead(int pin)
 {
 #define VALUE_MAX 30
 	char path[VALUE_MAX];
@@ -126,8 +124,7 @@ GPIORead(int pin)
 	return(atoi(value_str));
 }
 
-static int
-GPIOWrite(int pin, int value)
+static int GPIOWrite(int pin, int value)
 {
 	static const char s_values_str[] = "01";
 
@@ -230,11 +227,11 @@ void lcd_init()
    pinMode (LCD_D7, OUTPUT);
    
    // initialise LCD
-   SetCmdMode(); // set for commands
-   lcd_byte(0x33); // full init 
-   lcd_byte(0x32); // 4 bit mode
-   lcd_byte(0x28); // 2 line mode
-   lcd_byte(0x0C); // display on, cursor off, blink off
+   SetCmdMode();    // set for commands
+   lcd_byte(0x33);  // full init 
+   lcd_byte(0x32);  // 4 bit mode
+   lcd_byte(0x28);  // 2 line mode
+   lcd_byte(0x0C);  // display on, cursor off, blink off
    lcd_byte(0x01);  // clear screen
    delay(3);        // clear screen is slow!
 }
@@ -242,7 +239,7 @@ void lcd_init()
 // lcd_print function print text on lcd
 int lcd_print(char *msg) 
 {
-  SetCmdMode(); // set for commands
+  SetCmdMode();    // set for commands
   delay(2000);
   lcd_byte(0x01);  //Clear screen
   delay(2000);

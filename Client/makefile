@@ -11,7 +11,13 @@ ifeq ($(INCLUDES),)
 	INCLUDES = -I/
 endif
 
-all: SocketClient SocketServer socket_lcd socket_message_rcv socket_message_rcv_lcd SocketServer_sensors q_msg_lcd
+all: socketuserserver SocketClient SocketServer socket_lcd socket_message_rcv socket_message_rcv_lcd SocketServer_sensors q_msg_lcd
+
+socketuserserver.o: socketuserserver.c
+	$(CC) $(CFLAGS) -c socketuserserver.c
+
+socketuserserver: socketuserserver.o
+	$(CC) $(CFLAGS) $(INCLUDES) socketuserserver.o -o socketuserserver $(LDFLAGS)
 
 SocketServer.o: SocketServer.c
 	$(CC) $(CFLAGS) -c SocketServer.c
@@ -64,4 +70,4 @@ q_msg_lcd: q_msg_lcd.o
 clean:
 	rm -f *.o
 	rm -f SocketClient socket_lcd socket_message_rcv socket_message_rcv_lcd SocketServer_sensors q_msg_lcd
-	rm -f SocketServer 
+	rm -f SocketServer socketuserserver

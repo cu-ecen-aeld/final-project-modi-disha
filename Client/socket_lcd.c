@@ -1,8 +1,5 @@
-/*
- * lcd.c:
- *	  Simple program to send a string to the LCD 
- */
-
+// ref: https://www.bristolwatch.com/rpi/code/i2clcd.txt
+// ref: https://www.raspberrypi.org/forums/viewtopic.php?t=93613
 #include <stdio.h>
 #include <stdlib.h>
 #include "socket_lcd.h"

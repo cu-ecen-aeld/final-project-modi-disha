@@ -1,5 +1,0 @@
-
-config BR2_PACKAGE_GPIOMODULE
-        bool "gpiomodule"
-        help
-                Linux Kernel Module Cheat.

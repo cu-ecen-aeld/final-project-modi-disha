@@ -1,3 +1,7 @@
+/* Message Queue application for AESD final project. This file implements Message queue receive code 
+ * Author: Disha Modi */
+// Ref: https://www.softprayog.in/programming/interprocess-communication-using-posix-message-queues-in-linux
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,7 +22,6 @@ int main (int argc, char **argv)
     char client_queue_name [64];
     mqd_t qd_server;   // queue descriptors
 
-
     // create the client queue for receiving messages from server
     sprintf (client_queue_name, "/sp-example-client-%d", getpid ());
 
@@ -28,11 +31,6 @@ int main (int argc, char **argv)
     attr.mq_maxmsg = MAX_MESSAGES;
     attr.mq_msgsize = MAX_MSG_SIZE;
     attr.mq_curmsgs = 0;
-
-    /*if ((qd_client = mq_open (client_queue_name, O_RDONLY | O_CREAT, QUEUE_PERMISSIONS, &attr)) == -1) {
-        perror ("Client: mq_open (client)");
-        exit (1);
-    } */
 
     if ((qd_server = mq_open (SERVER_QUEUE_NAME, O_WRONLY)) == -1) {
         perror ("Client: mq_open (server)");
@@ -53,28 +51,12 @@ int main (int argc, char **argv)
             continue;
         }
 
-        // receive response from server
-
-       /* if (mq_receive (qd_client, in_buffer, MSG_BUFFER_SIZE, NULL) == -1) {
-            perror ("Client: mq_receive");
-            exit (1);
-        } */
         // display token received from server
         printf ("Client: Send message to server: %s\n\n", client_queue_name);
 
         printf ("Ask for a token (Press ): ");
     }
 
-
-  /*  if (mq_close (qd_client) == -1) {
-        perror ("Client: mq_close");
-        exit (1);
-    }
-
-    if (mq_unlink (client_queue_name) == -1) {
-        perror ("Client: mq_unlink");
-        exit (1);
-    } */
     printf ("Client: bye\n");
 
     exit (0);

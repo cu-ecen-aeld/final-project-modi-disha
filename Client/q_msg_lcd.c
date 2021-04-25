@@ -253,8 +253,6 @@ int main (int argc, char **argv)
    // GPIOinit();
     lcd_init();
 
-    while (1) 
-    {
         // get the oldest message with highest priority
  
 
@@ -262,13 +260,19 @@ int main (int argc, char **argv)
 
 	lcd_print("Hello Maitreyee!");
 	printf ("Hello Maitreyee!");
+	
+	sleep(10);
 
 	lcd_print("Hello Swati!");
 	printf ("Hello Swati!");
 	
+	sleep(10);
+
 	lcd_print("Hello Girls!");
 	printf ("Hello Girls!");
 
+	sleep(10);
+
         printf ("Server: response printed on lcd.\n");
-    }
+
 }

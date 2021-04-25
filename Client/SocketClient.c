@@ -81,7 +81,7 @@ void* threadhandler(void* thread_param)
      //receive the string
  	ssize_t length = recv(args->thread_socket, rcv_cmd, sizeof(rcv_cmd), 0);
  	
-    rcv_cmd[length] = '\0';
+        rcv_cmd[length] = '\0';
     
  	//check if read failed
  	if(length == -1) 
@@ -152,14 +152,14 @@ int main(int argc, char *argv[])
 	  return -1; 
   }
 
- struct mq_attr attr;
+   struct mq_attr attr;
 
     attr.mq_flags = 0;
     attr.mq_maxmsg = MAX_MESSAGES;
     attr.mq_msgsize = MAX_MSG_SIZE;
     attr.mq_curmsgs = 0;
 
-   if ((aesdqueue = mq_open (SERVER_QUEUE_NAME, O_WRONLY)) == -1) {
+    if ((aesdqueue = mq_open (SERVER_QUEUE_NAME, O_WRONLY)) == -1) {
         perror ("Client: mq_open (server)");
         exit (1);
     }
@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
 
 		  if(connect(threadParams[i].thread_socket, res->ai_addr, res->ai_addrlen) == -1)
 		  {
-		    printf("Connect to server failed\n");
+		    	printf("Connect to server failed\n");
 		  }
 		  else
 		  {

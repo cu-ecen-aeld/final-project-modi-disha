@@ -345,8 +345,8 @@ int read_sensor_data()
 
 	diff = stop - start;
 
-	distance = (diff/58) * 10;
-	printf(" distance %d\n", distance);
+	distance = (diff/580.8) * 100;
+	printf(" distance %f\n", distance);
 
 	return distance;
 }

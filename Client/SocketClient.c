@@ -139,12 +139,12 @@ void* threadhandler(void* thread_param)
 // Executes code until sigint or sigterm signal.
 int main(int argc, char *argv[])
 {
-  thread_count = atoi(argv[1])-1;
+  thread_count = atoi(argv[1]);
   pthread_t thread[thread_count]; 
   threadParams_t threadParams[thread_count];
   signal(SIGTERM,handle_sig);
   signal(SIGINT,handle_sig);
-  uint8_t user_threadid = atoi(argv[1])+1;
+  //uint8_t user_threadid = atoi(argv[1])+1;
   
   if(pthread_mutex_init(&socklock, NULL) != 0)
   {

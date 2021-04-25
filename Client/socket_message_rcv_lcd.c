@@ -249,7 +249,7 @@ int lcd_print(char *msg)
   delay(2000);
   SetChrMode(); 
   lcd_text(msg);
-  sleep(1);
+  delay(5000);
   return 0 ;
 }
 

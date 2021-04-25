@@ -120,7 +120,7 @@ void* threadhandler(void* thread_param)
 		
     	 if(alert_flag)
     	 {
-    		 send(socket_client, rcv_cmd, strlen(rcv_cmd), MSG_DONTWAIT);
+    		 //send(socket_client, rcv_cmd, strlen(rcv_cmd), MSG_DONTWAIT);
 		 if (mq_send (aesdqueue, rcv_cmd, strlen (rcv_cmd) + 1, 0) == -1) 	             
                 {
 		    perror ("Client: Not able to send message to server");
@@ -170,8 +170,9 @@ int main(int argc, char *argv[])
   ref.ai_socktype = SOCK_STREAM;
   
   printf("Client is trying to connect with %d servers.\n", atoi(argv[1]));
-  printf("Client considers last IP address as user IP address by default.\n");
+  //printf("Client considers last IP address as user IP address by default.\n");
 
+/*
   if(getaddrinfo(argv[user_threadid], PORT, &ref, &res) != 0)
   {
     syslog(LOG_ERR, "getaddrinfo failed.");
@@ -190,7 +191,7 @@ int main(int argc, char *argv[])
   else
   {
 	  printf("Client connected with Server %s successfully.", argv[user_threadid]);
-  }
+  } */
 
   while(signal_flag)
   {

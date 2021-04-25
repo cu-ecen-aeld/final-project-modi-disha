@@ -73,7 +73,7 @@ void* threadhandler1(void* thread_param)
 		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
 		
 	        pthread_mutex_lock(&socklock);	
-		if(k > 40)
+		if(k > 60)
 		{
 			sprintf(rdBuff, "%s !Alert S1: %d\n",buf, k);
 		}
@@ -115,7 +115,7 @@ void* threadhandler2(void* thread_param)
 		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
 		
         	pthread_mutex_lock(&socklock);
-		if(k > 40)
+		if(k > 60)
 		{
 			sprintf(rdBuff, "%s !Alert S2: %d\n",buf, k);
 		}

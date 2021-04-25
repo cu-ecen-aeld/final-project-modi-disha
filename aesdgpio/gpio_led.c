@@ -21,13 +21,14 @@
 
 static int GPIOExport(int pin)
 {
-
+	#define BUFFER_MAX 3
 	char buffer[BUFFER_MAX];
 	ssize_t bytes_written;
 	int fd;
 
 	fd = open("/sys/class/gpio/export", O_WRONLY);
-	if (-1 == fd) {
+	if (-1 == fd) 
+	{
 		fprintf(stderr, "Failed to open export for writing!\n");
 		return(-1);
 	}
@@ -59,6 +60,8 @@ static int GPIOUnexport(int pin)
 static int GPIODirection(int pin, int dir)
 {
 	static const char s_directions_str[]  = "in\0out";
+
+	#define DIRECTION_MAX 35
 	char path[DIRECTION_MAX];
 	int fd;
 
@@ -80,7 +83,7 @@ static int GPIODirection(int pin, int dir)
 
 static int GPIORead(int pin)
 {
-
+	#define VALUE_MAX 30
 	char path[VALUE_MAX];
 	char value_str[3];
 	int fd;
@@ -98,12 +101,14 @@ static int GPIORead(int pin)
 	}
 
 	close(fd);
+
 	return(atoi(value_str));
 }
 
 static int GPIOWrite(int pin, int value)
 {
 	static const char s_values_str[] = "01";
+
 	char path[VALUE_MAX];
 	int fd;
 

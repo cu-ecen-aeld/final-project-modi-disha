@@ -309,7 +309,7 @@ int main (int argc, char **argv)
 	}
 
 	// print on LCD
-	/* if(in_buffer[j] == '3' || in_buffer[j] == '4')
+	 if(in_buffer[j] == '4')
 	{
 		for(int z = i; z <= j; z++)
 		{
@@ -319,10 +319,10 @@ int main (int argc, char **argv)
 		printf ("LCD message %s\n", &out_buffer[i]);
 	}
 	else
-	{ */
+	{ 
 	  	lcd_print(&in_buffer[i]);
 		printf ("LCD message %s\n", &in_buffer[i]);
-	//}
+	}
 
 	if(in_buffer[j] == '1')
 	{

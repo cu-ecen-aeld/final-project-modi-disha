@@ -345,7 +345,7 @@ int read_sensor_data()
 
 	diff = stop - start;
 
-	distance = (diff/580.8) * 100;
+	distance = (diff/580.8) * 10;
 	printf(" distance %f\n", distance);
 
 	return distance;
@@ -376,7 +376,7 @@ void* threadhandler1(void* thread_param)
 		strftime(buf, 80,"%x-%H:%M %p ", timeinfo);
 		
 	        pthread_mutex_lock(&socklock); /// protect rdBuff as it is shared  	
-		if(k < 16)
+		if(k < 60)
 		{
 			sprintf(rdBuff, "%s !Alert S3: %d\n",buf, k);
 		}

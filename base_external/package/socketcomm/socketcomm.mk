@@ -5,7 +5,7 @@
 #
 ##############################################################
 
-SOCKETCOMM_VERSION=c44c9539d0249bec89c50874898e9693a70084e2
+SOCKETCOMM_VERSION=e9e81ea5d0d44de3f4f67ab7a221f8ad289377f3
 # Note: Be sure to reference the *ssh* repository URL here (not https) to work properly
 # with ssh keys and the automated build/test system.
 # Your site should start with git@github.com:

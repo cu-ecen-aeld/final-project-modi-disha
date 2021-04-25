@@ -229,17 +229,17 @@ void lcd_init()
    delay(3);        // clear screen is slow!
 }
 
-//int print_on_lcd(char *str) 
 int lcd_print(char *msg) 
 {
-  SetCmdMode(); // set for commands
-  lcd_byte(0x01);  //Clear screen
-  lcd_byte(0x02);
-  lcd_byte(0x80);  // set home loc
-  sleep(1);        // clear screen is slow!
   SetChrMode(); 
   lcd_text(msg);
-  lcd_text("                                ");
+  SetCmdMode(); // set for commands
+  delay(2000);
+  lcd_byte(0x01, 0);  //Clear screen
+  delay(2000);
+  lcd_byte(0x02, 0);
+  delay(2000);
+  lcd_byte(0x80, 0);  // set home loc
   return 0 ;
 }
 

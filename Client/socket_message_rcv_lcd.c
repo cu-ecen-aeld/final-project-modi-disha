@@ -242,11 +242,17 @@ void lcd_init()
 // lcd_print function print text on lcd
 int lcd_print(char *msg) 
 {
+  SetCmdMode(); // set for commands
+  delay(2000);
   lcd_byte(0x01);  //Clear screen
-  sleep(2);        // clear screen is slow!
+  delay(2000);
+  lcd_byte(0x02);
+  delay(2000);
+  lcd_byte(0x80);  // set home loc
+  delay(2000);
   SetChrMode(); 
   lcd_text(msg);
-  lcd_text("  ");
+  sleep(2);
   return 0 ;
 }
 

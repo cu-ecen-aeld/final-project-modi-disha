@@ -233,11 +233,11 @@ int lcd_print(char *msg)
 {
   SetCmdMode(); // set for commands
   delay(2000);
-  lcd_byte(0x01, 0);  //Clear screen
+  lcd_byte(0x01);  //Clear screen
   delay(2000);
-  lcd_byte(0x02, 0);
+  lcd_byte(0x02);
   delay(2000);
-  lcd_byte(0x80, 0);  // set home loc
+  lcd_byte(0x80);  // set home loc
   delay(2000);
   SetChrMode(); 
   lcd_text(msg);

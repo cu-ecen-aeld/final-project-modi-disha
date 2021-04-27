@@ -170,28 +170,6 @@ int main(int argc, char *argv[])
   ref.ai_socktype = SOCK_STREAM;
   
   printf("Client is trying to connect with %d servers.\n", atoi(argv[1]));
-  //printf("Client considers last IP address as user IP address by default.\n");
-
-/*
-  if(getaddrinfo(argv[user_threadid], PORT, &ref, &res) != 0)
-  {
-    syslog(LOG_ERR, "getaddrinfo failed.");
-    return -1;
-  }
-
-  if((socket_client = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0)
-  {
-		perror("socket failed");
-  }
-
-  if(connect(socket_client, res->ai_addr, res->ai_addrlen) == -1)
-  {
-    printf("Connect to server failed\n");
-  }
-  else
-  {
-	  printf("Client connected with Server %s successfully.", argv[user_threadid]);
-  } */
 
   while(signal_flag)
   {

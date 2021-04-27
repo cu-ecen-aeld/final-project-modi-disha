@@ -17,6 +17,9 @@ Client-X code will be hosted in a repository at [Client-Repo](https://github.com
 # Schedule Page
 [Link to Schedule Page](https://github.com/cu-ecen-5013/final-project-swatikadivar/wiki/Schedule-Page)
 
+# Demo Page
+[Link to Demo Page](https://github.com/cu-ecen-5013/final-project-modi-disha/wiki/Disha's-Final-Project-Video)
+
 
 # buildroot-rpi
 
